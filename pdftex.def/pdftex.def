@@ -1,4 +1,4 @@
-\ProvidesFile{pdftex.def}[2002/07/02 v0.04a graphics/color for pdftex]
+\ProvidesFile{pdftex.def}[2002/07/02 v0.04a-BETA graphics/color for pdftex]
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 %%
 %% LaTeX Colour and Graphics support for PDFTeX
@@ -7,6 +7,9 @@
 %% Heiko Oberdiek and Martin Schröder
 %%
 %% The current maintainers can be reached at pdftex-latex@pdftex.org
+%%
+%% The home page of this project is at http://pdftex-def.berlios.de
+%% Please report bugs etc. there
 %%
 %% This file may be distributed and/or modified under the
 %% conditions of the LaTeX Project Public License, either version 1.2
@@ -22,6 +25,8 @@
 %% \usepackage[pdftex]{graphicx}
 %%
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+%
+% $Id: pdftex.def,v 1.12 2002/12/16 11:48:47 oneiros Exp $
 %
 % History
 % 2002/07/02 v0.04a
@@ -751,3 +756,4 @@
   }%
 }%
 \endinput
+% vim: syntax=tex:tw=75:ts=2
