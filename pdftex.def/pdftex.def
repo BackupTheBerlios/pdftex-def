@@ -1,4 +1,4 @@
-\ProvidesFile{pdftex.def}[2001/11/29 v0.03i graphics/color for pdftex]
+\ProvidesFile{pdftex.def}[2002/06/18 v0.03j graphics/color for pdftex]
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 %%
 %% LaTeX Colour and Graphics support for PDFTeX
@@ -64,6 +64,9 @@
 %    \@currname.
 % 2001/11/29 v0.03i
 %  * Problem with \if@inlabel (plain format) fixed.
+% 2002/06/18 v0.03j
+%  * Contribution by P\'etiard Fran\c{c}ois <petiard@math.univ-fcomte.fr>:
+%    Improvement of \Ginclude@mps.
 %
 % prefix of internal commands for this file `pdftex.def':
 %   \GPT@ (Graphics bundle PdfTex driver)
@@ -612,7 +615,43 @@
     \ifx\Gin@scalex\@tempa\let\Gin@scalex\Gin@scaley\fi
   \fi
   \hbox{%
-    \convertMPtoPDF{#1}{\Gin@scalex}{\Gin@scaley}%
+    \Gscale@box{\Gin@scalex}[\Gin@scaley]{%
+      \@ifundefined{Gin@vllx}{%
+        \GPT@viewportfalse
+        % without viewport/trim clipping does not make sense
+        % for pdfTeX
+        \Gin@clipfalse
+      }{}%
+      \ifGin@clip
+        \ifnum\driver@release<6
+          \GPT@warn{No clipping support in pdfTeX < 0.14}%
+        \else
+          \if!\Gin@vllx\Gin@vlly\Gin@vurx\Gin@vury!%
+          \else
+            \let\GPT@clipend\GPT@DoClipEnd
+            \setbox\@tempboxa\hbox\bgroup
+          \fi
+        \fi
+      \fi
+      \ifGPT@viewport
+        \ifdim\Gin@vlly\p@=\z@
+        \else
+          \lower\Gin@vlly bp\hbox\bgroup
+        \fi
+        \ifdim\Gin@vllx\p@=\z@
+        \else
+          \hskip-\Gin@vllx bp\relax
+        \fi
+      \fi
+      \convertMPtoPDF{#1}{1}{1}%
+      \ifGPT@viewport
+        \ifdim\Gin@vlly\p@=\z@
+        \else
+          \egroup
+        \fi
+        \GPT@clipend
+      \fi
+    }%
   }%
 }
 \def\Gread@mps{\Gread@eps}
