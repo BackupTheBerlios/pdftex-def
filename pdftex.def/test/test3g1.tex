@@ -1,0 +1,20 @@
+\documentclass{scrlettr}
+\usepackage[pdftex]{graphicx}
+
+\def\test#1#2{%
+  \typeout{TEST: \string#1 (\the#1)=#2}%
+  \ifdim#1=#2\relax
+    \typeout{OK.}%
+  \else
+    \typeout{*** ERROR ***}%
+  \fi
+}
+
+\begin{document}
+
+\test{\paperwidth}{0pt}
+\test{\paperheight}{0pt}
+\test{\pdfpagewidth}{597.50793pt} % 210mm
+\test{\pdfpageheight}{845.04694pt} % 297mm
+
+\end{document}

@@ -1,0 +1,21 @@
+\documentclass[a5paper]{article}
+\usepackage[pdftex]{graphicx}
+
+\def\test#1#2{%
+  \typeout{TEST: \string#1 (\the#1)=#2}%
+  \ifdim#1=#2\relax
+    \typeout{OK.}%
+  \else
+    \typeout{*** ERROR ***}%
+  \fi
+}
+
+\begin{document}
+
+% a5paper settings of article.cls
+\test{\paperwidth}{148mm}
+\test{\paperheight}{210mm}
+\test{\pdfpagewidth}{148mm}
+\test{\pdfpageheight}{210mm}
+
+\end{document}
