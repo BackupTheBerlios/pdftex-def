@@ -1,4 +1,4 @@
-\ProvidesFile{pdftex.def}[2001/08/13 v0.03h graphics/color for pdftex]
+\ProvidesFile{pdftex.def}[2001/05/25 v0.03g graphics/color for pdftex]
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 %%
 %% LaTeX Colour and Graphics support for PDFTeX
@@ -58,8 +58,6 @@
 % 2001/05/25 v0.03g
 %  * \pdfpagewidth and \pdfpageheight are not set to zero,
 %    if \paperwidth and \paperheight are not set (HO).
-% 2001/08/13 v0.03h
-%  * Color is set to the defined color black before an image is loaded.
 %
 % prefix of internal commands for this file `pdftex.def':
 %   \GPT@ (Graphics bundle PdfTex driver)
@@ -402,9 +400,7 @@
     \ifnum\driver@release>5
       \expandafter\xdef\csname #1 image\GPT@page
         \ifx\GPT@print\@empty\else!\fi\endcsname{%
-        \pdfliteral{q 0 g 0 G}%
         \pdfrefximage\the\pdflastximage
-        \pdfliteral{Q}%
       }%
     \else
       \pdfform\@tempboxa
