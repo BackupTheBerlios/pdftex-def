@@ -28,9 +28,13 @@
 %%
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 %
-% $Id: pdftex.def,v 1.13 2003/01/20 13:53:41 oneiros Exp $
+% $Id: pdftex.def,v 1.14 2003/06/04 21:51:47 oberdiek Exp $
 %
 % History
+% 2003/06/04
+%  * Fix for bug #516: definitions of keyval's \define@key
+%    used for new options to get more independence of package
+%    loading order.
 % 2003/01/20 v0.10a
 %  * Added option 'attr' (MS).
 %  * Added option 'pagebox' (MS).
@@ -297,36 +301,46 @@
 \let\GPT@attr\@empty
 % \GPT@pagebox: <pdf box spec>
 \let\GPT@pagebox\@empty
-\begingroup
-  \toks@{%
-    \define@key{Gin}{page}{%
-      \def\GPT@page{#1}%
-    }%
-    \define@key{Gin}{print}{%
-      \def\GPT@print{#1}%
-    }%
-    \define@key{Gin}{quiet}[]{%
-      \let\Gin@log\@gobble
-    }%
-    \define@key{Gin}{resolution}{%
-      \pdfimageresolution#1\relax
-    }%
-    \define@key{Gin}{attr}{%
-      \def\GPT@attr{attr {#1}}%
-    }%
-    \define@key{Gin}{pagebox}{%
-      \def\GPT@pagebox{ #1}%
+%
+% Test for \define@key without defining it
+\begingroup\expandafter\expandafter\expandafter\endgroup
+\expandafter\ifx\csname define@key\endcsname\relax
+  % package keyval is not loaded yet, thus its definitions
+  % are used here to define the new options.
+  % \@ifnextchar and \@namedef are provided by miniltx.tex.
+  \def\GPT@define@key#1#2{%
+    \@ifnextchar[{%
+      \GPT@KV@def{#1}{#2}%
+    }{%
+      \@namedef{KV@#1@#2}####1%
     }%
   }%
-  \@ifundefined{define@key}{%
-    \edef\x{\endgroup
-      \noexpand\AtBeginDocument{%
-        \noexpand\@ifundefined{define@key}{}{\the\toks@}%
-      }%
-    }\x
-  }{%
-    \expandafter\endgroup\the\toks@
-  }
+  \def\GPT@KV@def#1#2[#3]{%
+    \@namedef{KV@#1@#2@default\expandafter}\expandafter
+        {\csname KV@#1@#2\endcsname{#3}}%
+    \@namedef{KV@#1@#2}##1%
+  }%
+\else
+  \let\GPT@define@key\define@key
+\fi
+\GPT@define@key{Gin}{page}{%
+  \def\GPT@page{#1}%
+}%
+\GPT@define@key{Gin}{print}{%
+  \def\GPT@print{#1}%
+}%
+\GPT@define@key{Gin}{quiet}[]{%
+  \let\Gin@log\@gobble
+}%
+\GPT@define@key{Gin}{resolution}{%
+  \pdfimageresolution#1\relax
+}%
+\GPT@define@key{Gin}{attr}{%
+  \def\GPT@attr{attr {#1}}%
+}%
+\GPT@define@key{Gin}{pagebox}{%
+  \def\GPT@pagebox{ #1}%
+}%
 
 % redefinitions of some graphicx options:
 \def\GPT@disable#1{%
@@ -335,6 +349,8 @@
     option `viewport' instead%
   }%
 }
+% Here we have to trust that package graphicx is not
+% loaded after applying the fix "\AtBeginDocument".
 \def\GPT@fix{%
   \begingroup\expandafter\expandafter\expandafter\endgroup
   \expandafter\ifx\csname define@key\endcsname\relax
@@ -388,7 +404,7 @@
   \fi
   % Ensure the default cropbox for \GPT@pagebox
   \ifx\GPT@pagebox\empty
-    \def\GPT@pagebox{ cropbox}% 
+    \def\GPT@pagebox{ cropbox}%
   \fi
   \@ifundefined{#1 image\GPT@page\GPT@pagebox}{%
     \ifx\GPT@print\@empty
