@@ -1,0 +1,3 @@
+Test for hsb color model:
+  pdflatex test-hsb | grep PSTEST | gs -
+  pdfelatex test-hsb | grep PSTEST | gs -

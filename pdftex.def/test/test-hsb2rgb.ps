@@ -1,0 +1,91 @@
+%!PS-Adobe
+
+% .hsb_2_rgb copied from gs_cspace.ps (ghostscript 8.10) with bug fix:
+/.hsb_2_rgb
+  {
+    3 { 0 max 1 min 3 1 roll } repeat
+    1 2 index sub 1 index mul      % (1 - s) * br
+    3 -1 roll 2 index mul 6 mul    % 6 * s * br
+    4 -1 roll                      % stack: <br>  <(1 - s) * br>  <6 * s * br>  <h>
+
+    % array of procedures for the 7 hue cases
+      {
+        % 0 ==> r >= g >= b
+        { mul 1 index add exch }
+
+        % 1 ==> g >= r >= b
+        { 0.333333 exch sub mul 1 index add 3 1 roll }
+
+        % 2 ==> g >= b >= r
+        { 0.333333 sub mul 1 index add 3 1 roll exch 3 -1 roll }
+
+        % 3 ==> b >= g >= r
+        { 0.666667 exch sub mul 1 index add 3 -1 roll }
+
+        % 4 ==> b >= r >= g
+        { 0.666667 sub mul 1 index add 3 1 roll exch }
+
+        % 5 ==> r >= b >= g
+        { 1 exch sub mul 1 index add }
+
+        % Corrected gs implementation:
+        % 6 ==> same as case 0 (roundoff anomally)
+        { pop pop 0 1 index add exch }
+      }
+    1 index 6 mul cvi              % (int)(6 * h)
+    get exec
+  }
+bind def
+
+% <num> numprint
+/numprint {
+  20 string cvs print
+} bind def
+
+% <h> <s> <b> hsb
+/hsb {
+  /B exch def
+  /S exch def
+  /H exch def
+} bind def
+
+% <H> <S> <B> HSB
+/HSB {
+  hsb
+  /H H 360 div def
+  /S S 255 div def
+  /B B 255 div def
+} bind def
+
+% <r> <g> <b> rgb
+/rgb {
+  /b exch def
+  /g exch def
+  /r exch def
+} bind def
+/rg { rgb } bind def
+/RG { rgb } bind def
+
+% <x> <y> check -> boolean
+/check {
+  sub abs 1E-04 gt % ignore differences because of rounding
+} bind def
+
+% <h> <s> <b> <r> <g> <b> test
+/test {
+  H S B .hsb_2_rgb
+  /bb exch def
+  /gg exch def
+  /rr exch def
+  ([hsb:) print
+  H numprint (,) print S numprint (,) print B numprint (] ) print
+  ([rgb:) print
+  r numprint (,) print g numprint (,) print b numprint (] ) print
+  ([RGB:) print
+  rr numprint (,) print gg numprint (,) print bb numprint (]\n) print
+  r rr check { (  --> r differs: ) print rr r sub numprint (\n) print } if
+  g gg check { (  --> g differs: ) print gg g sub numprint (\n) print } if
+  b bb check { (  --> b differs: ) print bb b sub numprint (\n) print } if
+} bind def
+
+%EOF
