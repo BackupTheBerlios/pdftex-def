@@ -60,7 +60,8 @@
 %    if \paperwidth and \paperheight are not set (HO).
 % 2001/09/01 v0.03h
 %  * Compatibilty for miniltx.tex, problems fixed:
-%    \@ifpackageloaded, \PackageWarning, \PackageWarningNoLine.
+%    \@ifpackageloaded, \PackageWarning, \PackageWarningNoLine,
+%    \@currname.
 %
 % prefix of internal commands for this file `pdftex.def':
 %   \GPT@ (Graphics bundle PdfTex driver)
@@ -692,8 +693,11 @@
 
 % Are we running under PDFTeX?
 \ifx\pdfpageheight\@undefined
-  \PackageWarningNoLine\@currname
-    {pdftex option does not work with standard TeX}
+  \PackageWarningNoLine{%
+    \@ifundefined{@currname}{pdftex.def}{\@currname}%
+  }{%
+    pdftex option does not work with standard TeX%
+  }%
 \else
   \ifx\paperwidth\@undefined
   \else
