@@ -1,4 +1,4 @@
-\ProvidesFile{pdftex.def}[2003/06/04 v0.10a-BETA graphics/color for pdftex]
+\ProvidesFile{pdftex.def}[2003/06/20 v0.10a-BETA graphics/color for pdftex]
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 %%
 %% LaTeX Colour and Graphics support for PDFTeX
@@ -28,10 +28,10 @@
 %%
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 %
-% $Id: pdftex.def,v 1.15 2003/06/05 09:52:40 oberdiek Exp $
+% $Id: pdftex.def,v 1.16 2003/06/20 11:49:16 oberdiek Exp $
 %
 % History
-% 2003/06/04 v0.10a
+% 2003/06/20 v0.10a
 %  * Added option 'attr' (MS).
 %  * Added option 'pagebox' (MS).
 %  * Allow \write18 (MS).
@@ -40,6 +40,7 @@
 %  * Fix for bug #516: definitions of keyval's \define@key
 %    used for new options to get more independence of package
 %    loading order (HO).
+%  * Added support for color models "hsb" and "HSB" (HO).
 % 2002/06/19 v0.03k
 %  * Correction by P\'etiard Fran\c{c}ois for \GPT@DoEndClip.
 % 2002/06/18 v0.03j
@@ -145,6 +146,8 @@
 %   * cmyk   supported directly.
 %   * rgb    supported directly.
 %   * RGB    converted to rgb by this file.
+%   * hsb    converted to rgb by this file.
+%   * HSB    converted to rgb by this file.
 %   * gray   supported directly.
 %   * named  converted to cmyk by this file.
 %
@@ -153,6 +156,19 @@
   \ifdim\dimen@<\z@\dimen@\maxdimen\fi
   \ifdim\dimen@>\p@
     \PackageError{color}{Argument `#1' not in range [0,1]}\@ehd
+  \fi
+}
+% \GPT@arg@test{<value>}{<upper range>}{<cmd for result>}
+\def\GPT@arg@test#1#2#3{%
+  \def#3{#1}%
+  \dimen@#1\p@
+  \ifdim\dimen@<\z@
+    \PackageError{color}{Argument `#1' too small, not in range [0,#2]}\@ehd
+    \def#3{0}%
+  \fi
+  \ifdim\dimen@>#2\p@
+    \PackageError{color}{Argument `#1' too large, not in range [0,#2]}\@ehd
+    \def#3{#2}%
   \fi
 }
 \def\color@cmyk#1#2{\c@lor@@cmyk#2\@@#1}
@@ -186,6 +202,203 @@
   \divide\dimen@\@cclv
   \edef#2{\strip@pt\dimen@}%
 }
+%
+% The "hsb" color model is not supported by PDF, so the values
+% are converted into "rgb" values:
+%
+%   Input: h (hue), s (saturation), b (brightness)
+%          (h, s, b) \in ([0,1], [0,1], [0,1])       % hsb model
+%          (H, S, B) \in ([0,360], [0,255], [0,255]) % HSB model
+%          (h, s, b) := (H/360, S/255, B/255)
+%   Output: r (red), g (green), b (blue)
+%
+%   M := (1 - s) * b;
+%   D := s * b;
+%   H := 6 * h;
+%   x := (int)floor(H);
+%   if (x >= 6) {
+%       x := 0;
+%       H := 0;
+%   }
+%   switch(x) {
+%     case 0:    /* r >= g >= b */
+%       r := b;
+%       b := M;
+%       g := M + D * H;
+%       break;
+%     case 1:    /* g >= r >= b */
+%       g := b;
+%       b := M;
+%       r := M + D * (2 - H);
+%       break;
+%     case 2:    /* g >= b >= r */
+%       g := b;
+%       r := M;
+%       b := M + D * (H - 2);
+%       break;
+%     case 3:    /* b >= g >= r */
+%       b := b;
+%       r := M;
+%       g := M + D * (4 - H);
+%       break;
+%     case 4:    /* b >= r >= g */
+%       b := b;
+%       g := M;
+%       r := M + D * (H - 4);
+%       break;
+%     case 5:    /* r >= b >= g */
+%       r := b;
+%       g := M;
+%       b := M + D * (6 - H);
+%       break;
+%   }
+%
+% References:
+% * "Color Gamut Transform Pairs" by Alvy Ray Smith
+%   http://alvyray.com/Papers/PapersCG.htm
+%   ftp://ftp.alvyray.com/Acrobat/Color78.pdf
+% * Ghostscript's gs_cspace.ps
+%   Caution: the implementation of case 6 is buggy currently (8.10).
+% * "efg's Color Reference Library -- Color Science / Color Theory"
+%   http://homepages.borland.com/efg2lab/Library/Color/Science.htm
+%   http://homepages.borland.com/efg2lab/Graphics/Colors/HSV.htm
+%
+\def\color@hsb#1#2{\c@lor@@hsb#2\@@#1\z@}
+\def\color@HSB#1#2{\c@lor@@hsb#2\@@#1\p@}
+\def\c@lor@@hsb#1,#2,#3\@@#4#5{%
+  \ifcase#5%
+    \GPT@arg@test{#1}{1}\@tempa
+    \GPT@arg@test{#2}{1}\@tempb
+    \GPT@arg@test{#3}{1}\@tempc
+  \else
+    \GPT@arg@test{#1}{360}\@tempa
+    \GPT@arg@test{#2}{255}\@tempb
+    \GPT@arg@test{#3}{255}\@tempc
+  \fi
+  \begingroup
+    \dimendef\H=1 % "hue" * 6
+    \dimendef\s=2 % "saturation"
+    \dimendef\b=3 % used for both "brightness" and "blue"
+    \dimendef\M=5 % (1 - "saturation") * "brightness"
+    \dimendef\D=6 % "saturation" * "brightness"
+    \dimendef\r=7 % "red"
+    \dimendef\g=8 % "green"
+    \H=\@tempa\p@
+    \s=\@tempb\p@
+    \b=\@tempc\p@
+    \ifcase#5%
+    \else
+      \divide\H 360 %
+      \divide\s 255 %
+      \divide\b 255 %
+    \fi
+    \H=6\H
+    \edef\x{\expandafter\GPT@floor\the\H}%
+    \ifnum\x<6 %
+    \else
+      \def\x{0}%
+      \H=\z@
+    \fi
+    \D=\strip@pt\b\s
+    \GPT@hsb@calc
+    \edef\x{%
+      \strip@pt\r\space
+      \strip@pt\g\space
+      \strip@pt\b\space
+    }%
+    \edef\x{%
+      \endgroup
+      \def\noexpand#4{\x rg \x RG}%
+    }%
+  \x
+}
+
+\begingroup
+  \def\x{\def\GPT@floor}
+  \catcode`P=12 %
+  \catcode`T=12 %
+\lowercase{\expandafter\endgroup\x#1.#2PT{#1}}%
+
+\begingroup\expandafter\expandafter\expandafter\endgroup
+\expandafter\ifx\csname dimexpr\endcsname\relax
+  \def\GPT@hsb@calc{%
+    \M=\p@
+    \advance\M-\s
+    \M=\strip@pt\b\M
+    % first use \b (brightness), thus it is free for \b (blue)
+    \ifcase\x\relax
+      \r=\b
+      \b=\M
+      \g=\strip@pt\D\H
+      \advance\g\M
+    \or % 1
+      \g=\b
+      \b=\M
+      \r=2\p@
+      \advance\r-\H
+      \r=\strip@pt\D\r
+      \advance\r\M
+    \or % 2
+      \g=\b
+      \r=\M
+      \b=\H
+      \advance\b-2\p@
+      \b=\strip@pt\D\b
+      \advance\b\M
+    \or % 3
+      % \b=\b
+      \r=\M
+      \g=4\p@
+      \advance\g-\H
+      \g=\strip@pt\D\g
+      \advance\g\M
+    \or % 4
+      % \b=\b
+      \g=\M
+      \r=\H
+      \advance\r-4\p@
+      \r=\strip@pt\D\r
+      \advance\r\M
+    \or % 5
+      \r=\b
+      \g=\M
+      \b=6\p@
+      \advance\b-\H
+      \b=\strip@pt\D\b
+      \advance\b\M
+    \fi
+  }%
+\else
+  \def\GPT@hsb@calc{%
+    \M=\strip@pt\b\dimexpr \p@ - \s \relax
+    % first use \b (brightness), thus it is free for \b (blue)
+    \ifcase\x\relax
+      \r=\b
+      \b=\M
+      \g=\dimexpr \M + \strip@pt\D \H \relax
+    \or % 1
+      \g=\b
+      \b=\M
+      \r=\dimexpr \M + \strip@pt\D \dimexpr 2\p@ - \H \relax\relax
+    \or % 2
+      \g=\b
+      \r=\M
+      \b=\dimexpr \M + \strip@pt\D \dimexpr \H - 2\p@ \relax\relax
+    \or % 3
+      % \b=\b
+      \r=\M
+      \g=\dimexpr \M + \strip@pt\D \dimexpr 4\p@ - \H \relax\relax
+    \or % 4
+      % \b=\b
+      \g=\M
+      \r=\dimexpr \M + \strip@pt\D \dimexpr \H - 4\p@ \relax\relax
+    \or % 5
+      \r=\b
+      \g=\M
+      \b=\dimexpr \M + \strip@pt\D \dimexpr 6\p@ - \H \relax\relax
+    \fi
+  }%
+\fi
 
 \def\color@named#1#2{\c@lor@@named#2,,\@@#1}
 \def\c@lor@@named#1,#2,#3\@@#4{%
