@@ -9,7 +9,16 @@
       [2003/07/14 v1.00 Driver for pdftex Package (MS/HO)]
 \documentclass{ltxdoc}
 \usepackage[T1]{fontenc}
+\usepackage{ifpdf}
+\ifpdf
+  \usepackage[pdftex]{graphicx}
+\fi
+% \GetFileInfo fills \filedate and \fileversion, but for this the file
+% has to be loaded into TeX. This is of course only possible with
+% pdftex. :-(
 \GetFileInfo{pdftex.def}
+\usepackage{xspace}
+\usepackage{rcs}
 \EnableCrossrefs
 \RecordChanges    % Gather update information
 %%\DisableCrossrefs% Say \DisableCrossrefs if index is ready
@@ -32,7 +41,7 @@
 \end{document}
 %</driver>
 %
-% Copyright 2000-2003 David Carlisle, Sebastian Rahtz, Hans Hagen,
+% Copyright 2000-2004 David Carlisle, Sebastian Rahtz, Hans Hagen,
 % Heiko Oberdiek and Martin Schröder
 %
 % This program may be redistributed and/or modified under the terms
@@ -45,8 +54,10 @@
 %
 % \fi
 %
-% ^^A\CheckSum{466}
-% ^^A$Id: pdftex.dtx,v 1.3 2003/07/15 16:07:27 oneiros Exp $
+% \CheckSum{1838}
+%% \RCS$Id: pdftex.dtx,v 1.4 2004/09/07 13:15:25 oneiros Exp $
+% \RCS$Revision: 1.4 $
+% \RCS$Date: 2004/09/07 13:15:25 $
 %
 %% \CharacterTable
 %% {Upper-case    \A\B\C\D\E\F\G\H\I\J\K\L\M\N\O\P\Q\R\S\T\U\V\W\X\Y\Z
@@ -67,41 +78,52 @@
 %
 %  \pagestyle{headings}
 %
-%  \newcommand*{\file}[1]     {\texttt{#1}}
+%  \newcommand*{\file}[1]     {\texttt{#1}\xspace}
 %  \newcommand{\plain}        {\texttt{plain}}
 %  \newcommand{\bs}           {\texttt{\symbol{'134}}}
 %  \newcommand*{\env}[1]      {\textsf{#1}}
 %  \newcommand*{\option}[1]   {\textsf{#1}}
-%  \newcommand*{\package}[1]  {\textsf{#1}}
+%  \newcommand*{\package}[1]  {\textsf{#1}\xspace}
+%  \newcommand*{\dstag}[1]    {\emph{#1}\xspace}
 %  \newcommand*{\NEWfeature}[1]{%
 %     \hskip 1sp \marginpar{\small\sffamily\raggedright
 %     New feature\\#1}}
 %  \newcommand*{\NEWdescription}[1]{%
 %     \hskip 1sp \marginpar{\small\sffamily\raggedright
 %     New description\\#1}}
+%  \newcommand*{\pdef}{\package{pdftex.def}}
+%  \newcommand*{\ptex}{pdf\TeX\xspace}
 %
 %  \changes{v0.10a}{2003/07/14}{Started move to dtx (MS)}
+%  \changes{v0.10a}{2004/09/07}{Added more documentation (MS)}
 %
 % ^^A -----------------------------
 %
 %  \title{\unskip
 %     The \textsf{pdftex}-driver for \LaTeX^^A
 %     \thanks{^^A
-%        The version number of this file is \fileversion,
-%        last revised \filedate.}^^A
+%        \ifpdf
+%           The version number of this file is \fileversion,
+%           last revised \filedate.
+%        \else
+%           The CVS-version number of this file is \RCSRevision,
+%           last revised \RCSDate.
+%        \fi
+%        }^^A
 %     }
 %  \author{David Carlisle \and Sebastian Rahtz 
 %          \and Hans Hagen \and Heiko Oberdiek
 %          \and Martin Schröder^^A
 %             \thanks{pdftex-latex@pdftex.org}^^A
 %          }
-%  \date{\filedate}
+%  \date{Documentation last changed \ifpdf\filedate\else\RCSDate\fi,\\
+%        typeset \today}
 %  \maketitle
 %
 % ^^A -----------------------------
 %
 %  \begin{abstract}
-%     TODO
+%     \pdef is the driver for \ptex for the graphics-Bundle of \LaTeX.
 %  \end{abstract}
 %
 %
@@ -111,83 +133,82 @@
 %
 % ^^A -----------------------------
 %
-%  \section{History}
+%  \section{Introduction}
 %  ^^A
-% \begin{oldcomments}
-% 2003/06/20 v0.10a
-%  * Added option 'attr' (MS).
-%  * Added option 'pagebox' (MS).
-%  * Allow \write18 (MS).
-%  * Remove support for tif images as per pdftex 1.01a (MS).
-%  * Moved code for older versions to pdftex03.def
-%  * Fix for bug #516: definitions of keyval's \define@key
-%    used for new options to get more independence of package
-%    loading order (HO).
-%  * Added support for color models "hsb" and "HSB" (HO).
-% 2002/06/19 v0.03k
-%  * Correction by P\'etiard Fran\c{c}ois for \GPT@DoEndClip.
-% 2002/06/18 v0.03j
-%  * Contribution by P\'etiard Fran\c{c}ois <petiard@math.univ-fcomte.fr>:
-%    Improvement of \Ginclude@mps (support of viewport and clip).
-% 2001/11/29 v0.03i
-%  * Problem with \if@inlabel (plain format) fixed.
-% 2001/09/01 v0.03h
-%  * Compatibilty for miniltx.tex, problems fixed:
-%    \@ifpackageloaded, \PackageWarning, \PackageWarningNoLine,
-%    \@currname.
-% 2001/05/25 v0.03g
-%  * \pdfpagewidth and \pdfpageheight are not set to zero,
-%    if \paperwidth and \paperheight are not set (HO).
-% 2000/11/10 v0.03f
-%  * Bug, that produces an error message, if package `graphics'
-%    is used (introduced in 0.03d), fixed: If \Gin@vllx is not
-%    defined (graphics), then clipping and the moves of options
-%    viewport/trim are silently disabled (HO).
-% 2000/09/14 v0.03e
-%  * Options `bbllx', `bblly', `bburx', `bbury' disabled,
-%    option `bb' redirected with a warning to `viewport' (HO).
-% 2000/09/14 v0.03d
-%  * Fixes for `viewport' and `trim' (HO).
-%  * Clip support added for viewport and trim (HO).
-% 2000/09/04 v0.03c
-%  * Redefinition of `natwidth' and `natheight' \AtBeginDocument (HO).
-% 2000/08/31 v0.03b:
-%  * support for alternate print images: option `print' added (HO).
-%    * This feature is not supported by Ghostscript, xpdf, or AR3.
-%    * The images should have the same dimensions/resolution.
-%  * Two experimental options added (HO):
-%    * `quiet': log messages are suppressed.
-%    * `resolution': sets \pdfimageresolution.
-%    Because these options are not supported by graphicx,
-%    they have to be set after \usepackage{graphicx}, eg.
-%      \setkeys{Gin}{quiet,resolution=300}
-%    Option `quiet' (for pdftex) can be make known to graphic{s,x}
-%    with this line in graphics.cfg:
-%      \DeclareOption{quiet}{\let\Gin@log\@gobble}
-%    Caution: both options are experimental and can be
-%    change in next versions!
-%  * \pdfpage{width,height} are only set, if \paperwidth
-%    is defined (HO).
-% 2000/06/16 v0.03a:
-%  * Added Heiko to author list (DPC).
-% 2000/05/31 v0.02v:
-%  * Option `page' is defined at begin document,
-%    if package `keyval' is loaded after `pdftex.def'.
-% 2000/05/12 v0.02u:
-%  * support for multipage pdf files, option `page' added (HO).
-% 2000/05/02 v0.02t:
-%  * \pagecolor supported (HO).
-% 2000/04/20 v0.02s:
-%  * gray color model directly supported (HO).
-% ...
-% \end{oldcomments}
-%
+% This file is the driver for \ptex for the graphics-Bundle of \LaTeX
+% (\package{graphics}, \package{graphicx}, \package{color}). It is
+% also usable with \file{plain.tex} with the help of
+% \file{miniltx.tex}.
 %
 % ^^A -----------------------------
 %
-%  \section{Options}
+%  \section{Usage}
 %  ^^A
-%  TODO
+% Simply give the option \option{pdftex} in the \cs{usepackage}
+% command of all supported packages (e.\,g. \package{graphics},
+% \package{graphicx}, \package{color}).
+%
+% ^^A -----------------------------
+%
+% \subsection{Graphics inclusion}
+% ^^A
+% Images included multiple times in the document are included only
+% once by this code and reused to save space in the PDF.
+%
+% ^^A -----------------------------
+%
+% \subsubsection{File types}
+% ^^A
+% \pdef supports PNG files (extension \texttt{.png}), JPEG files
+% (extension \texttt{.jpg}), MetaPost files (extension \texttt{.mps})
+% and PDF files (extension \texttt{.pdf}).
+% MetaPost inclusion depends on loading a Con\TeX{}t module by Hans Hagen;
+% PDF inclusion also needs a Con\TeX{}t module with old \ptex ($<0.12n$).
+%
+% ^^A -----------------------------
+%
+% \subsubsection{Options}
+% ^^A
+% \pdef provides additional options to be used in the optional
+% argument of \cs{includegraphics} with the \package{graphicx}
+% package. These are:
+% \begin{description}
+%   \item[\normalfont\option{alternate}]
+%     TODO
+%   \item[\normalfont\option{attr}]
+%     A string which is directly placed in the dictionary of the
+%     generated Forms XObject.
+%   \item[\normalfont\option{page}]
+%     The physical page number of the page to include of the PDF file.
+%     Only valid for PDF files. Defaults to 1.
+%   \item[\normalfont\option{quiet}]
+%     TODO
+%   \item[\normalfont\option{pagebox}]
+%     A string specifying the boundary of to use for the included PDF
+%     page: \textsf{mediabox} for the MediaBox, \textsf{cropbox} for
+%     the CropBox, \textsf{bleedbox} for the BleedBox,
+%     \textsf{trimbox} for the TrimBox and \textsf{artbox} for the
+%     ArtBox.
+%     Default is the CropBox for compatibilty with older versions of
+%     \ptex.
+%   \item[\normalfont\option{resolution}]
+%     TODO
+% \end{description}
+%
+% ^^A -----------------------------
+%
+% \subsection{Color support}
+% ^^A
+% The following models may be used:
+% \begin{description}
+%   \item[cmyk]   supported directly.
+%   \item[rgb]    supported directly.
+%   \item[RGB]    converted to rgb by this file.
+%   \item[hsb]    converted to rgb by this file.
+%   \item[HSB]    converted to rgb by this file.
+%   \item[gray]   supported directly.
+%   \item[named]  converted to cmyk by this file.
+% \end{description}
 %
 % ^^A -----------------------------
 %
@@ -203,6 +224,12 @@
 % ^^A -----------------------------
 %
 %  \section{The implementation}
+% ^^A
+% This file produces two target files: \file{pdftex.def} (docstrip-tag
+% \dstag{package}) and \file{pdftex003.def} (docstrip-tag
+% \dstag{package003}). \file{pdftex.def} is the main driver and
+% contains code for newer versions of \ptex ($\ge1.00$). If it's used
+% with an older version of \ptex, it loads \file{pdftex003.def}.
 %
 % \begin{oldcomments}
 % load the old version of pdftex.def for older versions of pdftex.
@@ -285,14 +312,7 @@
 %</package,package003>
 %    \end{macrocode}
 % \begin{oldcomments}
-% Colour Support. The following models may be used.
-%   * cmyk   supported directly.
-%   * rgb    supported directly.
-%   * RGB    converted to rgb by this file.
-%   * hsb    converted to rgb by this file.
-%   * HSB    converted to rgb by this file.
-%   * gray   supported directly.
-%   * named  converted to cmyk by this file.
+% Colour Support.
 % \end{oldcomments}
 %    \begin{macrocode}
 %<*package,package003>
@@ -359,6 +379,7 @@
 }
 %</package,package003>
 %    \end{macrocode}
+% \begin{footnotesize}
 % \begin{oldcomments}
 % The "hsb" color model is not supported by PDF, so the values
 % are converted into "rgb" values:
@@ -420,6 +441,7 @@
 %   http://homepages.borland.com/efg2lab/Library/Color/Science.htm
 %   http://homepages.borland.com/efg2lab/Graphics/Colors/HSV.htm
 % \end{oldcomments}
+% \end{footnotesize}
 %    \begin{macrocode}
 %<*package>
 \def\color@hsb#1#2{\c@lor@@hsb#2\@@#1\z@}
@@ -633,7 +655,6 @@
 %    \begin{macrocode}
 % Need the `colorfix' modifications as no internal colour stack
 % is maintained
-%<*colorfix>
 \AtBeginDocument{%
   \let\@ldc@l@r\color
   \def\color{%
@@ -646,17 +667,8 @@
   \let\@lduseb@x\usebox
   \def\usebox#1{\@lduseb@x{#1}\set@color}%
 }
-%</colorfix>
 %    \end{macrocode}
 % \begin{oldcomments}
-% Graphic inclusion. Currently supports .png, .jpg, .mps and .pdf inclusion;
-% .mps is MetaPost output.
-% .mps inclusion depends on loading a CONTEXT module by Hans Hagen;
-% .pdf also needs a Context module unless pdftex 0.12n or later.
-%
-% PNG bitmaps may be scaled/rotated as usual
-% by the graphics commands or keyword arguments.
-%
 % Note the magic in front of the file name after \pdfimage, to
 % prevent it fouling up with file names starting with "depth".
 % \end{oldcomments}
@@ -668,6 +680,7 @@
   \Gin@defaultbp\Gin@ury{\ht\@tempboxa}%
 }
 %    \end{macrocode}
+% \begin{footnotesize}
 % \begin{oldcomments}
 % support for
 % * multipage pdf images (pdfTeX v0.14+)
@@ -682,6 +695,7 @@
 % * option pagebox for specifying the <pdf box spec>
 %     Default is the cropbox to be compatible with old versions of pdfTeX.
 % \end{oldcomments}
+% \end{footnotesize}
 %    \begin{macrocode}
 % \GPT@page: page number of pdf image or \@empty otherwise.
 \let\GPT@page\@empty
@@ -810,8 +824,8 @@
 %</package,package003>
 %    \end{macrocode}
 % \begin{oldcomments}
-% mechanism for re-use of objects also
-% allows us to get the size by deriving it from the initial storage;
+% mechanism for re-use of objects also allows us to 
+% get the size by deriving it from the initial storage; 
 % this works for all graphics types.
 % \end{oldcomments}
 %    \begin{macrocode}
@@ -1422,6 +1436,81 @@
 }%
 %</package,package003>
 %    \end{macrocode}
+%
+% ^^A -----------------------------
+%
+%  \section{Old history}
+%  ^^A
+% \begin{footnotesize}
+% \begin{oldcomments}
+% 2003/06/20 v0.10a
+%  * Added option 'attr' (MS).
+%  * Added option 'pagebox' (MS).
+%  * Allow \write18 (MS).
+%  * Remove support for tif images as per pdftex 1.01a (MS).
+%  * Moved code for older versions to pdftex03.def
+%  * Fix for bug #516: definitions of keyval's \define@key
+%    used for new options to get more independence of package
+%    loading order (HO).
+%  * Added support for color models "hsb" and "HSB" (HO).
+% 2002/06/19 v0.03k
+%  * Correction by P\'etiard Fran\c{c}ois for \GPT@DoEndClip.
+% 2002/06/18 v0.03j
+%  * Contribution by P\'etiard Fran\c{c}ois <petiard@math.univ-fcomte.fr>:
+%    Improvement of \Ginclude@mps (support of viewport and clip).
+% 2001/11/29 v0.03i
+%  * Problem with \if@inlabel (plain format) fixed.
+% 2001/09/01 v0.03h
+%  * Compatibilty for miniltx.tex, problems fixed:
+%    \@ifpackageloaded, \PackageWarning, \PackageWarningNoLine,
+%    \@currname.
+% 2001/05/25 v0.03g
+%  * \pdfpagewidth and \pdfpageheight are not set to zero,
+%    if \paperwidth and \paperheight are not set (HO).
+% 2000/11/10 v0.03f
+%  * Bug, that produces an error message, if package `graphics'
+%    is used (introduced in 0.03d), fixed: If \Gin@vllx is not
+%    defined (graphics), then clipping and the moves of options
+%    viewport/trim are silently disabled (HO).
+% 2000/09/14 v0.03e
+%  * Options `bbllx', `bblly', `bburx', `bbury' disabled,
+%    option `bb' redirected with a warning to `viewport' (HO).
+% 2000/09/14 v0.03d
+%  * Fixes for `viewport' and `trim' (HO).
+%  * Clip support added for viewport and trim (HO).
+% 2000/09/04 v0.03c
+%  * Redefinition of `natwidth' and `natheight' \AtBeginDocument (HO).
+% 2000/08/31 v0.03b:
+%  * support for alternate print images: option `print' added (HO).
+%    * This feature is not supported by Ghostscript, xpdf, or AR3.
+%    * The images should have the same dimensions/resolution.
+%  * Two experimental options added (HO):
+%    * `quiet': log messages are suppressed.
+%    * `resolution': sets \pdfimageresolution.
+%    Because these options are not supported by graphicx,
+%    they have to be set after \usepackage{graphicx}, eg.
+%      \setkeys{Gin}{quiet,resolution=300}
+%    Option `quiet' (for pdftex) can be make known to graphic{s,x}
+%    with this line in graphics.cfg:
+%      \DeclareOption{quiet}{\let\Gin@log\@gobble}
+%    Caution: both options are experimental and can be
+%    change in next versions!
+%  * \pdfpage{width,height} are only set, if \paperwidth
+%    is defined (HO).
+% 2000/06/16 v0.03a:
+%  * Added Heiko to author list (DPC).
+% 2000/05/31 v0.02v:
+%  * Option `page' is defined at begin document,
+%    if package `keyval' is loaded after `pdftex.def'.
+% 2000/05/12 v0.02u:
+%  * support for multipage pdf files, option `page' added (HO).
+% 2000/05/02 v0.02t:
+%  * \pagecolor supported (HO).
+% 2000/04/20 v0.02s:
+%  * gray color model directly supported (HO).
+% ...
+% \end{oldcomments}
+% \end{footnotesize}
 %
 %
 % ^^A -----------------------------
