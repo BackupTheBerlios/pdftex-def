@@ -1,9 +1,9 @@
-\ProvidesFile{pdftex.def}[2002/07/02 v0.04a-BETA graphics/color for pdftex]
+\ProvidesFile{pdftex.def}[2003/01/20 v0.10a-BETA graphics/color for pdftex]
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 %%
 %% LaTeX Colour and Graphics support for PDFTeX
 %%
-%% Copyright 2000-2002 David Carlisle, Sebastian Rahtz, Hans Hagen,
+%% Copyright 2000-2003 David Carlisle, Sebastian Rahtz, Hans Hagen,
 %% Heiko Oberdiek and Martin Schröder
 %%
 %% The current maintainers can be reached at pdftex-latex@pdftex.org
@@ -19,6 +19,8 @@
 %% and version 1.2 or later is part of all distributions of LaTeX
 %% version 1999/12/01 or later.
 %%
+%% This program consists of the files pdftex.def and pdftex003.def
+%%
 %% It may be used by specifying the pdftex option to any of the
 %% supported packages, for example:
 %%
@@ -26,10 +28,10 @@
 %%
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 %
-% $Id: pdftex.def,v 1.12 2002/12/16 11:48:47 oneiros Exp $
+% $Id: pdftex.def,v 1.13 2003/01/20 13:53:41 oneiros Exp $
 %
 % History
-% 2002/07/02 v0.04a
+% 2003/01/20 v0.10a
 %  * Added option 'attr' (MS).
 %  * Added option 'pagebox' (MS).
 %  * Allow \write18 (MS).
@@ -97,7 +99,7 @@
 
 % load the old version of pdftex.def for older versions of pdftex.
 \let\GPT@next\relax
-\def\GPT@olddriver{\input{pdftex03.def}\endinput}%
+\def\GPT@olddriver{\input{pdftex003.def}\endinput}%
 \ifx\pdftexversion\@undefined
   \let\GPT@next\GPT@olddriver
 \else
