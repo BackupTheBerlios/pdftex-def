@@ -66,7 +66,7 @@
 %  * Problem with \if@inlabel (plain format) fixed.
 % 2002/06/18 v0.03j
 %  * Contribution by P\'etiard Fran\c{c}ois <petiard@math.univ-fcomte.fr>:
-%    Improvement of \Ginclude@mps.
+%    Improvement of \Ginclude@mps (support of viewport and clip).
 %
 % prefix of internal commands for this file `pdftex.def':
 %   \GPT@ (Graphics bundle PdfTex driver)
