@@ -1,4 +1,4 @@
-\ProvidesFile{pdftex.def}[2003/01/20 v0.10a-BETA graphics/color for pdftex]
+\ProvidesFile{pdftex.def}[2003/06/04 v0.10a-BETA graphics/color for pdftex]
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 %%
 %% LaTeX Colour and Graphics support for PDFTeX
@@ -28,19 +28,18 @@
 %%
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 %
-% $Id: pdftex.def,v 1.14 2003/06/04 21:51:47 oberdiek Exp $
+% $Id: pdftex.def,v 1.15 2003/06/05 09:52:40 oberdiek Exp $
 %
 % History
-% 2003/06/04
-%  * Fix for bug #516: definitions of keyval's \define@key
-%    used for new options to get more independence of package
-%    loading order.
-% 2003/01/20 v0.10a
+% 2003/06/04 v0.10a
 %  * Added option 'attr' (MS).
 %  * Added option 'pagebox' (MS).
 %  * Allow \write18 (MS).
 %  * Remove support for tif images as per pdftex 1.01a (MS).
 %  * Moved code for older versions to pdftex03.def
+%  * Fix for bug #516: definitions of keyval's \define@key
+%    used for new options to get more independence of package
+%    loading order (HO).
 % 2002/06/19 v0.03k
 %  * Correction by P\'etiard Fran\c{c}ois for \GPT@DoEndClip.
 % 2002/06/18 v0.03j
