@@ -1,9 +1,20 @@
-\ProvidesFile{pdftex.def}[2002/06/19 v0.03k graphics/color for pdftex]
+\ProvidesFile{pdftex.def}[2002/07/02 v0.04a graphics/color for pdftex]
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 %%
 %% LaTeX Colour and Graphics support for PDFTeX
 %%
-%% David Carlisle, Sebastian Rahtz, Hans Hagen and Heiko Oberdiek
+%% Copyright 2000-2002 David Carlisle, Sebastian Rahtz, Hans Hagen,
+%% Heiko Oberdiek and Martin Schröder
+%%
+%% The current maintainers can be reached at pdftex-latex@pdftex.org
+%%
+%% This file may be distributed and/or modified under the
+%% conditions of the LaTeX Project Public License, either version 1.2
+%% of this license or (at your option) any later version.
+%% The latest version of this license is in
+%%    http://www.latex-project.org/lppl.txt
+%% and version 1.2 or later is part of all distributions of LaTeX
+%% version 1999/12/01 or later.
 %%
 %% It may be used by specifying the pdftex option to any of the
 %% supported packages, for example:
@@ -13,18 +24,39 @@
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 %
 % History
-% ...
-% 2000/04/20 v0.02s:
-%  * gray color model directly supported (HO).
-% 2000/05/02 v0.02t:
-%  * \pagecolor supported (HO).
-% 2000/05/12 v0.02u:
-%  * support for multipage pdf files, option `page' added (HO).
-% 2000/05/31 v0.02v:
-%  * Option `page' is defined at begin document,
-%    if package `keyval' is loaded after `pdftex.def'.
-% 2000/06/16 v0.03a:
-%  * Added Heiko to author list (DPC).
+% 2002/07/02 v0.04a
+%  * Added option 'attr' (MS).
+%  * Added option 'pagebox' (MS).
+%  * Allow \write18 (MS).
+%  * Remove support for tif images as per pdftex 1.01a (MS).
+%  * Moved code for older versions to pdftex03.def
+% 2002/06/19 v0.03k
+%  * Correction by P\'etiard Fran\c{c}ois for \GPT@DoEndClip.
+% 2002/06/18 v0.03j
+%  * Contribution by P\'etiard Fran\c{c}ois <petiard@math.univ-fcomte.fr>:
+%    Improvement of \Ginclude@mps (support of viewport and clip).
+% 2001/11/29 v0.03i
+%  * Problem with \if@inlabel (plain format) fixed.
+% 2001/09/01 v0.03h
+%  * Compatibilty for miniltx.tex, problems fixed:
+%    \@ifpackageloaded, \PackageWarning, \PackageWarningNoLine,
+%    \@currname.
+% 2001/05/25 v0.03g
+%  * \pdfpagewidth and \pdfpageheight are not set to zero,
+%    if \paperwidth and \paperheight are not set (HO).
+% 2000/11/10 v0.03f
+%  * Bug, that produces an error message, if package `graphics'
+%    is used (introduced in 0.03d), fixed: If \Gin@vllx is not
+%    defined (graphics), then clipping and the moves of options
+%    viewport/trim are silently disabled (HO).
+% 2000/09/14 v0.03e
+%  * Options `bbllx', `bblly', `bburx', `bbury' disabled,
+%    option `bb' redirected with a warning to `viewport' (HO).
+% 2000/09/14 v0.03d
+%  * Fixes for `viewport' and `trim' (HO).
+%  * Clip support added for viewport and trim (HO).
+% 2000/09/04 v0.03c
+%  * Redefinition of `natwidth' and `natheight' \AtBeginDocument (HO).
 % 2000/08/31 v0.03b:
 %  * support for alternate print images: option `print' added (HO).
 %    * This feature is not supported by Ghostscript, xpdf, or AR3.
@@ -42,62 +74,33 @@
 %    change in next versions!
 %  * \pdfpage{width,height} are only set, if \paperwidth
 %    is defined (HO).
-% 2000/09/04 v0.03c
-%  * Redefinition of `natwidth' and `natheight' \AtBeginDocument (HO).
-% 2000/09/14 v0.03d
-%  * Fixes for `viewport' and `trim' (HO).
-%  * Clip support added for viewport and trim (HO).
-% 2000/09/14 v0.03e
-%  * Options `bbllx', `bblly', `bburx', `bbury' disabled,
-%    option `bb' redirected with a warning to `viewport' (HO).
-% 2000/11/10 v0.03f
-%  * Bug, that produces an error message, if package `graphics'
-%    is used (introduced in 0.03d), fixed: If \Gin@vllx is not
-%    defined (graphics), then clipping and the moves of options
-%    viewport/trim are silently disabled (HO).
-% 2001/05/25 v0.03g
-%  * \pdfpagewidth and \pdfpageheight are not set to zero,
-%    if \paperwidth and \paperheight are not set (HO).
-% 2001/09/01 v0.03h
-%  * Compatibilty for miniltx.tex, problems fixed:
-%    \@ifpackageloaded, \PackageWarning, \PackageWarningNoLine,
-%    \@currname.
-% 2001/11/29 v0.03i
-%  * Problem with \if@inlabel (plain format) fixed.
-% 2002/06/18 v0.03j
-%  * Contribution by P\'etiard Fran\c{c}ois <petiard@math.univ-fcomte.fr>:
-%    Improvement of \Ginclude@mps (support of viewport and clip).
-% 2002/06/19 v0.03k
-%  * Correction by P\'etiard Fran\c{c}ois for \GPT@DoEndClip.
+% 2000/06/16 v0.03a:
+%  * Added Heiko to author list (DPC).
+% 2000/05/31 v0.02v:
+%  * Option `page' is defined at begin document,
+%    if package `keyval' is loaded after `pdftex.def'.
+% 2000/05/12 v0.02u:
+%  * support for multipage pdf files, option `page' added (HO).
+% 2000/05/02 v0.02t:
+%  * \pagecolor supported (HO).
+% 2000/04/20 v0.02s:
+%  * gray color model directly supported (HO).
+% ...
 %
 % prefix of internal commands for this file `pdftex.def':
 %   \GPT@ (Graphics bundle PdfTex driver)
 
+% load the old version of pdftex.def for older versions of pdftex.
+\let\GPT@next\relax
+\def\GPT@olddriver{\input{pdftex03.def}\endinput}%
 \ifx\pdftexversion\@undefined
-  \def\driver@release{1}%
+  \let\GPT@next\GPT@olddriver
 \else
-  \ifnum\pdftexversion<12
-    \def\driver@release{2}%
-  \else
-    \ifnum\pdftexversion<13
-      \ifnum \expandafter `\pdftexrevision < `n
-        \def\driver@release{3}%
-      \else
-        \def\driver@release{4}%
-      \fi
-    \else
-      \ifnum\pdftexversion=13
-        \def\driver@release{5}%
-      \else
-        \ifnum\pdftexversion=14
-          \def\driver@release{6}%
-        \else
-          \def\driver@release{7}%
-        \fi
-      \fi
-    \fi
+  \ifnum\pdftexversion<100\relax
+    \let\GPT@next\GPT@olddriver
   \fi
 \fi
+\GPT@next
 
 % miniltx.tex does not define \PackageWarning
 % or \PackageWarningNoLine.
@@ -249,7 +252,7 @@
 %</colorfix>
 
 %
-% Graphic inclusion. Currently supports .tif, .png, .jpg, .mps and .pdf inclusion;
+% Graphic inclusion. Currently supports .png, .jpg, .mps and .pdf inclusion;
 % .mps is MetaPost output.
 % .mps inclusion depends on loading a CONTEXT module by Hans Hagen;
 % .pdf also needs a Context module unless pdftex 0.12n or later.
@@ -268,44 +271,44 @@
 
 %
 % support for
-% * multipage pdf images (pdfTeX v0.14+)
+% * multipage pdf images
 % * alternate print image (bitmaps only)
-%   * driver version>=5 (0.14)
 %   * printed image can be resused, but not the base image,
 %     because it's dictionary contains the additional key /Alternates.
 %   * not supported by Ghostscript or xpdf.
 % * option quiet
+% * option attr for additional entries in the dictionary of the
+%     generated Forms XObject
+% * option pagebox for specifying the <pdf box spec>
+%     Default is the cropbox to be compatible with old versions of pdfTeX.
 %
 % \GPT@page: page number of pdf image or \@empty otherwise.
 \let\GPT@page\@empty
 % \GPT@print: file name for alternate image or \@empty otherwise.
 \let\GPT@print\@empty
+% \GPT@attr: additional attributes.
+\let\GPT@attr\@empty
+% \GPT@pagebox: <pdf box spec>
+\let\GPT@pagebox\@empty
 \begingroup
   \toks@{%
-    \ifnum\driver@release>5
-      \define@key{Gin}{page}{%
-        \def\GPT@page{#1}%
-      }%
-      \define@key{Gin}{print}{%
-        \def\GPT@print{#1}%
-      }%
-    \else
-      \define@key{Gin}{page}{%
-        \GPT@warn{%
-          pdfTeX >= 0.14 required for option\MessageBreak `page'%
-        }%
-      }%
-      \define@key{Gin}{print}{%
-        \GPT@warn{%
-          pdfTeX >= 0.14 required for option\MessageBreak `print'%
-        }%
-      }%
-    \fi
+    \define@key{Gin}{page}{%
+      \def\GPT@page{#1}%
+    }%
+    \define@key{Gin}{print}{%
+      \def\GPT@print{#1}%
+    }%
     \define@key{Gin}{quiet}[]{%
       \let\Gin@log\@gobble
     }%
     \define@key{Gin}{resolution}{%
       \pdfimageresolution#1\relax
+    }%
+    \define@key{Gin}{attr}{%
+      \def\GPT@attr{attr {#1}}%
+    }%
+    \define@key{Gin}{pagebox}{%
+      \def\GPT@pagebox{ #1}%
     }%
   }%
   \@ifundefined{define@key}{%
@@ -349,7 +352,6 @@
 % allows us to get the size by deriving it from the initial storage;
 % this works for all graphics types.
 %
-\newcount\Gread@gobject
 \def\GPT@ReusedName#1{%
   \ifx\GPT@print\@empty
     #1%
@@ -377,101 +379,85 @@
   \else
     \expandafter\expandafter\expandafter\@firstoftwo\expandafter\@gobbletwo
   \fi
-  \@ifundefined{#1 image\GPT@page}{%
-    \ifnum\driver@release>4
-      \ifnum\driver@release>5
-        \ifx\GPT@print\@empty
-          \let\GPT@RuleAttr\@empty
-        \else
-          \@ifundefined{\GPT@print\space image\GPT@page}{%
-            \immediate\pdfximage{\GPT@print}%
-            \setbox\@tempboxa=\hbox{\pdfrefximage\pdflastximage}%
-            \edef\GPT@PrintObj{\the\pdflastximage}%
-            \expandafter\xdef\csname\GPT@print\space
-              image\GPT@page\endcsname{\pdfrefximage\GPT@PrintObj}%
-            \immediate\pdfobj{%
-              [<<%
-                /Image \GPT@PrintObj\space 0 R%
-                /DefaultForPrinting true%
-              >>]%
-            }%
-            \def\GPT@RuleAttr{%
-              width\wd\@tempboxa height\ht\@tempboxa
-              attr{/Alternates \the\pdflastobj\space 0 R}%
-            }%
-          }{%
-            \edef\GPT@PrintObj{%
-              \expandafter\expandafter\expandafter\@gobble
-              \csname\GPT@print\space image\GPT@page\endcsname
-            }%
-            \immediate\pdfobj{%
-              [<<%
-                /Image \GPT@PrintObj \space 0 R%
-                /DefaultForPrinting true%
-              >>]%
-            }%
-            \def\GPT@RuleAttr{%
-              width \csname\GPT@print\space width\GPT@page\endcsname
-              height \csname\GPT@print\space height\GPT@page\endcsname
-              attr{/Alternates \the\pdflastobj\space 0 R}%
-            }%
-          }%
-        \fi
-        \pdfximage \GPT@RuleAttr
-        \ifx\GPT@page\@empty
-        \else
-          page \GPT@page
-        \fi
-        {#1}%
-        \setbox\@tempboxa=\hbox{\pdfrefximage\pdflastximage}%
-      \else
-        \setbox\@tempboxa=\hbox{\pdfimage{#1}}%
-      \fi
+  % Ensure the default cropbox for \GPT@pagebox
+  \ifx\GPT@pagebox\empty
+    \def\GPT@pagebox{ cropbox}% 
+  \fi
+  \@ifundefined{#1 image\GPT@page\GPT@pagebox}{%
+    \ifx\GPT@print\@empty
+      \let\GPT@RuleAttr\@empty
     \else
-      \setbox\@tempboxa=\hbox{%
-        \pdfimage\noexpand\noexpand\noexpand\@empty#1\relax
+      \@ifundefined{\GPT@print\space image\GPT@page}{%
+        \immediate\pdfximage{\GPT@print}%
+        \setbox\@tempboxa=\hbox{\pdfrefximage\pdflastximage}%
+        \edef\GPT@PrintObj{\the\pdflastximage}%
+        \expandafter\xdef\csname\GPT@print\space
+          image\GPT@page\GPT@pagebox\endcsname{\pdfrefximage\GPT@PrintObj}%
+        \immediate\pdfobj{%
+          [<<%
+            /Image \GPT@PrintObj\space 0 R%
+            /DefaultForPrinting true%
+          >>]%
+        }%
+        \def\GPT@RuleAttr{%
+          width\wd\@tempboxa height\ht\@tempboxa
+        }%
+        \g@addto@macro\GPT@attr{/Alternates \the\pdflastobj\space 0 R}%
+      }{%
+        \edef\GPT@PrintObj{%
+          \expandafter\expandafter\expandafter\@gobble
+          \csname\GPT@print\space image\GPT@page\GPT@pagebox\endcsname
+        }%
+        \immediate\pdfobj{%
+          [<<%
+            /Image \GPT@PrintObj \space 0 R%
+            /DefaultForPrinting true%
+          >>]%
+        }%
+        \def\GPT@RuleAttr{%
+          width \csname\GPT@print\space width\GPT@page\GPT@pagebox\endcsname
+          height \csname\GPT@print\space height\GPT@page\GPT@pagebox\endcsname
+        }%
+        \g@addto@macro\GPT@attr{/Alternates \the\pdflastobj\space 0 R}%
       }%
     \fi
+    \pdfximage \GPT@RuleAttr \GPT@attr
+    \ifx\GPT@page\@empty
+    \else
+      page \GPT@page
+    \fi
+    \GPT@pagebox
+    {#1}%
+    \setbox\@tempboxa=\hbox{\pdfrefximage\pdflastximage}%
     \def\Gin@llx{0}\let\Gin@lly\Gin@llx
     \Gin@defaultbp\Gin@urx{\wd\@tempboxa}%
     \Gin@defaultbp\Gin@ury{\ht\@tempboxa}%
-    \expandafter\xdef\csname\GPT@ReusedName{#1} width\GPT@page\endcsname{%
+    \expandafter\xdef\csname\GPT@ReusedName{#1} width\GPT@page\GPT@pagebox\endcsname{%
       \the\wd\@tempboxa
     }%
-    \expandafter\xdef\csname\GPT@ReusedName{#1} height\GPT@page\endcsname{%
+    \expandafter\xdef\csname\GPT@ReusedName{#1} height\GPT@page\GPT@pagebox\endcsname{%
       \the\ht\@tempboxa
     }%
-    \ifnum\driver@release>5
-      \expandafter\xdef\csname #1 image\GPT@page
-        \ifx\GPT@print\@empty\else!\fi\endcsname{%
-        \pdfrefximage\the\pdflastximage
-      }%
-    \else
-      \pdfform\@tempboxa
-      \Gread@gobject=\pdflastform
-      \expandafter\xdef\csname#1 image\endcsname{%
-        \pdfrefform\the\Gread@gobject
-      }%
-    \fi
+    \expandafter\xdef\csname #1 image\GPT@page\GPT@pagebox
+      \ifx\GPT@print\@empty\else!\fi\endcsname{%
+      \pdfrefximage\the\pdflastximage
+    }%
     \Gin@log{%
        <#1, id=%
-       \ifnum\driver@release>5
-         \the\pdflastximage
-         \ifx\GPT@page\@empty\else , page=\GPT@page\fi
-         \ifx\GPT@print\@empty
-         \else
-            , print=\GPT@print, id=\GPT@PrintObj
-         \fi
+       \the\pdflastximage
+       \ifx\GPT@page\@empty\else , page=\GPT@page\fi
+       , pagebox=\GPT@pagebox
+       \ifx\GPT@print\@empty
        \else
-         \the\Gread@gobject
+          , print=\GPT@print, id=\GPT@PrintObj
        \fi
        , \the\wd\@tempboxa\space x \the\ht\@tempboxa
        >%
      }%
   }{%
     \def\Gin@llx{0}\let\Gin@lly\Gin@llx
-    \Gin@defaultbp\Gin@urx{\csname#1 width\GPT@page\endcsname}%
-    \Gin@defaultbp\Gin@ury{\csname#1 height\GPT@page\endcsname}%
+    \Gin@defaultbp\Gin@urx{\csname#1 width\GPT@page\GPT@pagebox\endcsname}%
+    \Gin@defaultbp\Gin@ury{\csname#1 height\GPT@page\GPT@pagebox\endcsname}%
   }%
 }
 \def\Ginclude@pdftex#1{%
@@ -495,14 +481,10 @@
         \Gin@clipfalse
       }{}%
       \ifGin@clip
-        \ifnum\driver@release<6
-          \GPT@warn{No clipping support in pdfTeX < 0.14}%
+        \if!\Gin@vllx\Gin@vlly\Gin@vurx\Gin@vury!%
         \else
-          \if!\Gin@vllx\Gin@vlly\Gin@vurx\Gin@vury!%
-          \else
-            \let\GPT@clipend\GPT@DoClipEnd
-            \setbox\@tempboxa\hbox\bgroup
-          \fi
+          \let\GPT@clipend\GPT@DoClipEnd
+          \setbox\@tempboxa\hbox\bgroup
         \fi
       \fi
       \ifGPT@viewport
@@ -515,7 +497,7 @@
           \hskip-\Gin@vllx bp\relax
         \fi
       \fi
-      \csname#1 image\GPT@page
+      \csname#1 image\GPT@page\GPT@pagebox
         \ifx\GPT@print\@empty\else!\fi
       \endcsname
       \ifGPT@viewport
@@ -627,14 +609,10 @@
         \Gin@clipfalse
       }{}%
       \ifGin@clip
-        \ifnum\driver@release<6
-          \GPT@warn{No clipping support in pdfTeX < 0.14}%
+        \if!\Gin@vllx\Gin@vlly\Gin@vurx\Gin@vury!%
         \else
-          \if!\Gin@vllx\Gin@vlly\Gin@vurx\Gin@vury!%
-          \else
-            \let\GPT@clipend\GPT@DoClipEnd
-            \setbox\@tempboxa\hbox\bgroup
-          \fi
+          \let\GPT@clipend\GPT@DoClipEnd
+          \setbox\@tempboxa\hbox\bgroup
         \fi
       \fi
       \ifGPT@viewport
@@ -659,46 +637,17 @@
   }%
 }
 \def\Gread@mps{\Gread@eps}
-\ifnum\driver@release>5
-  \let\Gread@tif\Gread@pdfbitmap
-  \let\Ginclude@tif\Ginclude@pdftex
-\fi
-\ifnum\driver@release>3
-  \let\Ginclude@png\Ginclude@pdftex
-  \let\Ginclude@jpg\Ginclude@pdftex
-  \let\Ginclude@pdf\Ginclude@pdftex
-  \let\Gread@pdf\Gread@pdftex
-  \let\Gread@png\Gread@pdfbitmap
-  \let\Gread@jpg\Gread@pdfbitmap
-\else
-  \def\Ginclude@pdf#1{%
-    \def\@tempa{!}%
-    \ifx\Gin@scaley\@tempa
-      \let\Gin@scaley\Gin@scalex
-    \else
-      \ifx\Gin@scalex\@tempa\let\Gin@scalex\Gin@scaley\fi
-    \fi
-    \hbox{%
-      \convertPDFtoPDF{#1}{\Gin@scalex}{\Gin@scaley} {0bp} {0bp}%
-      {\Gin@req@width}{\Gin@req@height}%
-    }%
-  }
-\fi
+\let\Ginclude@png\Ginclude@pdftex
+\let\Ginclude@jpg\Ginclude@pdftex
+\let\Ginclude@pdf\Ginclude@pdftex
+\let\Gread@pdf\Gread@pdftex
+\let\Gread@png\Gread@pdfbitmap
+\let\Gread@jpg\Gread@pdfbitmap
 
 % v0.02e: restrict the rules to just the types that pdftex can currently
 % deal with.
-\ifnum\driver@release>3
-  \ifnum\driver@release>5
-    \def\Gin@extensions{.png,.pdf,.jpg,.mps,.tif}
-    \@namedef{Gin@rule@.tif}#1{{tif}{.tif}{#1}}
-    \@namedef{Gin@rule@.jpg}#1{{jpg}{.jpg}{#1}}
-  \else
-    \def\Gin@extensions{.png,.pdf,.jpg,.mps}
-    \@namedef{Gin@rule@.jpg}#1{{jpg}{.jpg}{#1}}
-  \fi
-\else
-  \def\Gin@extensions{.png,.pdf,.mps}
-\fi
+\def\Gin@extensions{.png,.pdf,.jpg,.mps}
+\@namedef{Gin@rule@.jpg}#1{{jpg}{.jpg}{#1}}
 \@namedef{Gin@rule@.png}#1{{png}{.png}{#1}}
 \@namedef{Gin@rule@.mps}#1{{mps}{.mps}{#1}}
 \@namedef{Gin@rule@.pdf}#1{{pdf}{.pdf}{#1}}
@@ -740,6 +689,20 @@
   \expandafter\def\csname cos(-90)\endcsname{0}%
   \expandafter\def\csname sin(180)\endcsname{0}%
   \expandafter\def\csname cos(180)\endcsname{-1}%
+}
+
+% Patch \Gin@setfile to execute #3, if it contains
+% a command
+\AtBeginDocument{%
+  \let\GPT@orgGin@setfile\Gin@setfile
+  \def\Gin@setfile#1#2#3{%
+    \if`\@car #3\relax\@nil
+      \immediate\write18{\@cdr #3\@empty\@nil}%
+      \GPT@orgGin@setfile{#1}{#2}{\Gin@base #2}%
+    \else
+      \GPT@orgGin@setfile{#1}{#2}{#3}%
+    \fi
+  }%
 }
 
 % Are we running under PDFTeX?
