@@ -1,4 +1,4 @@
-\ProvidesFile{pdftex.def}[2000/11/10 v0.03f graphics/color for pdftex]
+\ProvidesFile{pdftex.def}[2001/05/25 v0.03g graphics/color for pdftex]
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 %%
 %% LaTeX Colour and Graphics support for PDFTeX
@@ -54,7 +54,10 @@
 %  * Bug, that produces an error message, if package `graphics'
 %    is used (introduced in 0.03d), fixed: If \Gin@vllx is not
 %    defined (graphics), then clipping and the moves of options
-%    viewport/trim are silently disabled.
+%    viewport/trim are silently disabled (HO).
+% 2001/05/25 v0.03g
+%  * \pdfpagewidth and \pdfpageheight are not set to zero,
+%    if \paperwidth and \paperheight are not set (HO).
 %
 % prefix of internal commands for this file `pdftex.def':
 %   \GPT@ (Graphics bundle PdfTex driver)
@@ -664,8 +667,14 @@
 \else
   \ifx\paperwidth\@undefined
   \else
-    \pdfpageheight\paperheight
-    \pdfpagewidth\paperwidth
+    \ifdim\paperheight=0pt\relax
+    \else
+      \pdfpageheight\paperheight
+    \fi
+    \ifdim\paperwidth=0pt\relax
+    \else
+      \pdfpagewidth\paperwidth
+    \fi
   \fi
   \pdfoutput=1
 \fi
