@@ -21,6 +21,7 @@
 \setlength{\columnseprule}{.4pt}
 \addtolength{\oddsidemargin}{1cm}
 \addtolength{\textwidth}{-1cm}
+\setcounter{StandardModuleDepth}{1}
 \begin{document}
    \DocInput{pdftex.dtx}
    \PrintIndex\PrintChanges
@@ -45,7 +46,7 @@
 % \fi
 %
 % ^^A\CheckSum{466}
-% ^^A$Id: pdftex.dtx,v 1.2 2003/07/15 15:11:37 oneiros Exp $
+% ^^A$Id: pdftex.dtx,v 1.3 2003/07/15 16:07:27 oneiros Exp $
 %
 %% \CharacterTable
 %% {Upper-case    \A\B\C\D\E\F\G\H\I\J\K\L\M\N\O\P\Q\R\S\T\U\V\W\X\Y\Z
@@ -89,9 +90,11 @@
 %        The version number of this file is \fileversion,
 %        last revised \filedate.}^^A
 %     }
-%  \author{David Carlisle, Sebastian Rahtz, Hans Hagen, Heiko Oberdiek
-%          and Martin Schröder\\
-%          \normalsize  pdftex-latex@pdftex.org}
+%  \author{David Carlisle \and Sebastian Rahtz 
+%          \and Hans Hagen \and Heiko Oberdiek
+%          \and Martin Schröder^^A
+%             \thanks{pdftex-latex@pdftex.org}^^A
+%          }
 %  \date{\filedate}
 %  \maketitle
 %
@@ -108,13 +111,87 @@
 %
 % ^^A -----------------------------
 %
+%  \section{History}
+%  ^^A
+% \begin{oldcomments}
+% 2003/06/20 v0.10a
+%  * Added option 'attr' (MS).
+%  * Added option 'pagebox' (MS).
+%  * Allow \write18 (MS).
+%  * Remove support for tif images as per pdftex 1.01a (MS).
+%  * Moved code for older versions to pdftex03.def
+%  * Fix for bug #516: definitions of keyval's \define@key
+%    used for new options to get more independence of package
+%    loading order (HO).
+%  * Added support for color models "hsb" and "HSB" (HO).
+% 2002/06/19 v0.03k
+%  * Correction by P\'etiard Fran\c{c}ois for \GPT@DoEndClip.
+% 2002/06/18 v0.03j
+%  * Contribution by P\'etiard Fran\c{c}ois <petiard@math.univ-fcomte.fr>:
+%    Improvement of \Ginclude@mps (support of viewport and clip).
+% 2001/11/29 v0.03i
+%  * Problem with \if@inlabel (plain format) fixed.
+% 2001/09/01 v0.03h
+%  * Compatibilty for miniltx.tex, problems fixed:
+%    \@ifpackageloaded, \PackageWarning, \PackageWarningNoLine,
+%    \@currname.
+% 2001/05/25 v0.03g
+%  * \pdfpagewidth and \pdfpageheight are not set to zero,
+%    if \paperwidth and \paperheight are not set (HO).
+% 2000/11/10 v0.03f
+%  * Bug, that produces an error message, if package `graphics'
+%    is used (introduced in 0.03d), fixed: If \Gin@vllx is not
+%    defined (graphics), then clipping and the moves of options
+%    viewport/trim are silently disabled (HO).
+% 2000/09/14 v0.03e
+%  * Options `bbllx', `bblly', `bburx', `bbury' disabled,
+%    option `bb' redirected with a warning to `viewport' (HO).
+% 2000/09/14 v0.03d
+%  * Fixes for `viewport' and `trim' (HO).
+%  * Clip support added for viewport and trim (HO).
+% 2000/09/04 v0.03c
+%  * Redefinition of `natwidth' and `natheight' \AtBeginDocument (HO).
+% 2000/08/31 v0.03b:
+%  * support for alternate print images: option `print' added (HO).
+%    * This feature is not supported by Ghostscript, xpdf, or AR3.
+%    * The images should have the same dimensions/resolution.
+%  * Two experimental options added (HO):
+%    * `quiet': log messages are suppressed.
+%    * `resolution': sets \pdfimageresolution.
+%    Because these options are not supported by graphicx,
+%    they have to be set after \usepackage{graphicx}, eg.
+%      \setkeys{Gin}{quiet,resolution=300}
+%    Option `quiet' (for pdftex) can be make known to graphic{s,x}
+%    with this line in graphics.cfg:
+%      \DeclareOption{quiet}{\let\Gin@log\@gobble}
+%    Caution: both options are experimental and can be
+%    change in next versions!
+%  * \pdfpage{width,height} are only set, if \paperwidth
+%    is defined (HO).
+% 2000/06/16 v0.03a:
+%  * Added Heiko to author list (DPC).
+% 2000/05/31 v0.02v:
+%  * Option `page' is defined at begin document,
+%    if package `keyval' is loaded after `pdftex.def'.
+% 2000/05/12 v0.02u:
+%  * support for multipage pdf files, option `page' added (HO).
+% 2000/05/02 v0.02t:
+%  * \pagecolor supported (HO).
+% 2000/04/20 v0.02s:
+%  * gray color model directly supported (HO).
+% ...
+% \end{oldcomments}
+%
+%
+% ^^A -----------------------------
+%
 %  \section{Options}
 %  ^^A
 %  TODO
 %
 % ^^A -----------------------------
 %
-%  \StopEventually{^^A
+%  \StopEventually{}
 %
 %
 % ^^A -----------------------------
@@ -127,9 +204,11 @@
 %
 %  \section{The implementation}
 %
+% \begin{oldcomments}
+% load the old version of pdftex.def for older versions of pdftex.
+% \end{oldcomments}
 %    \begin{macrocode}
 %<*package>
-% load the old version of pdftex.def for older versions of pdftex.
 \let\GPT@next\relax
 \def\GPT@olddriver{\input{pdftex003.def}\endinput}%
 \ifx\pdftexversion\@undefined
@@ -171,9 +250,11 @@
 \fi
 %</package003>
 %    \end{macrocode}
+% \begin{oldcomments}
+% miniltx.tex does not define \PackageWarning
+% \end{oldcomments}
 %    \begin{macrocode}
 %<*package,package003>
-% miniltx.tex does not define \PackageWarning
 % or \PackageWarningNoLine.
 \@ifundefined{PackageWarning}{%
   \def\PackageWarning#1#2{%
@@ -203,21 +284,18 @@
 \fi
 %</package,package003>
 %    \end{macrocode}
-%    \begin{macrocode}
-%<*package,package003>
+% \begin{oldcomments}
 % Colour Support. The following models may be used.
 %   * cmyk   supported directly.
 %   * rgb    supported directly.
 %   * RGB    converted to rgb by this file.
-%</package,package003>
-%<*package>
 %   * hsb    converted to rgb by this file.
 %   * HSB    converted to rgb by this file.
-%</package>
-%<*package,package003>
 %   * gray   supported directly.
 %   * named  converted to cmyk by this file.
-%
+% \end{oldcomments}
+%    \begin{macrocode}
+%<*package,package003>
 \def\c@lor@arg#1{%
   \dimen@#1\p@
   \ifdim\dimen@<\z@\dimen@\maxdimen\fi
@@ -281,8 +359,7 @@
 }
 %</package,package003>
 %    \end{macrocode}
-%    \begin{macrocode}
-%<*package>
+% \begin{oldcomments}
 % The "hsb" color model is not supported by PDF, so the values
 % are converted into "rgb" values:
 %
@@ -342,7 +419,9 @@
 % * "efg's Color Reference Library -- Color Science / Color Theory"
 %   http://homepages.borland.com/efg2lab/Library/Color/Science.htm
 %   http://homepages.borland.com/efg2lab/Graphics/Colors/HSV.htm
-%
+% \end{oldcomments}
+%    \begin{macrocode}
+%<*package>
 \def\color@hsb#1#2{\c@lor@@hsb#2\@@#1\z@}
 \def\color@Hsb#1#2{\c@lor@@hsb#2\@@#1\@ne}
 \def\color@HSB#1#2{\c@lor@@hsb#2\@@#1\tw@}
@@ -399,13 +478,15 @@
     }%
   \x
 }
-
+%    \end{macrocode}
+%    \begin{macrocode}
 \begingroup
   \def\x{\def\GPT@floor}
   \catcode`P=12 %
   \catcode`T=12 %
 \lowercase{\expandafter\endgroup\x#1.#2PT{#1}}%
-
+%    \end{macrocode}
+%    \begin{macrocode}
 \begingroup\expandafter\expandafter\expandafter\endgroup
 \expandafter\ifx\csname dimexpr\endcsname\relax
   \def\GPT@hsb@calc{%
@@ -498,7 +579,8 @@
     \edef#4{\csname col@#1\endcsname}%
   }%
 }
-
+%    \end{macrocode}
+%    \begin{macrocode}
 \def\set@color{%
   \pdfliteral{\current@color}%
   \aftergroup\reset@color
@@ -508,7 +590,8 @@
   \expandafter\edef\csname col@#1\endcsname{#2}%
 }
 \def\current@color{0 g 0 G}
-
+%    \end{macrocode}
+%    \begin{macrocode}
 % v0.02t: support for \pagecolor
 \def\set@page@color{%
   \global\let\current@page@color\current@color
@@ -546,10 +629,8 @@
     }%
   }{}%
 }
-%</package,package003>
 %    \end{macrocode}
 %    \begin{macrocode}
-%<*package,package003>
 % Need the `colorfix' modifications as no internal colour stack
 % is maintained
 %<*colorfix>
@@ -566,12 +647,9 @@
   \def\usebox#1{\@lduseb@x{#1}\set@color}%
 }
 %</colorfix>
-%</package,package003>
 %    \end{macrocode}
-%    \begin{macrocode}
-%<package>Graphic inclusion. Currently supports .png, .jpg, .mps and .pdf inclusion;
-%<package003>Graphic inclusion. Currently supports .tif, .png, .jpg, .mps and .pdf inclusion;
-%<*package,package003>
+% \begin{oldcomments}
+% Graphic inclusion. Currently supports .png, .jpg, .mps and .pdf inclusion;
 % .mps is MetaPost output.
 % .mps inclusion depends on loading a CONTEXT module by Hans Hagen;
 % .pdf also needs a Context module unless pdftex 0.12n or later.
@@ -581,32 +659,30 @@
 %
 % Note the magic in front of the file name after \pdfimage, to
 % prevent it fouling up with file names starting with "depth".
+% \end{oldcomments}
+%    \begin{macrocode}
 \def\Gread@png#1{%
   \setbox\@tempboxa\hbox{\pdfimage\noexpand\noexpand\noexpand\@empty#1\relax}%
   \def\Gin@llx{0}\let\Gin@lly\Gin@llx
   \Gin@defaultbp\Gin@urx{\wd\@tempboxa}%
   \Gin@defaultbp\Gin@ury{\ht\@tempboxa}%
 }
-
-%
+%    \end{macrocode}
+% \begin{oldcomments}
 % support for
-%</package,package003>
-%<package> * multipage pdf images (pdfTeX v0.14+)
-%<package,package003> * alternate print image (bitmaps only)
-%<package003> * driver version>=5 (0.14)
-%<*package,package003>
+% * multipage pdf images (pdfTeX v0.14+)
+% * alternate print image (bitmaps only)
+%   * driver version>=5 (0.14)
 %   * printed image can be resused, but not the base image,
 %     because it's dictionary contains the additional key /Alternates.
 %   * not supported by Ghostscript or xpdf.
 % * option quiet
-%</package,package003>
-%<*package>
 % * option attr for additional entries in the dictionary of the
 %     generated Forms XObject
 % * option pagebox for specifying the <pdf box spec>
 %     Default is the cropbox to be compatible with old versions of pdfTeX.
-%</package>
-%<*package,package003>
+% \end{oldcomments}
+%    \begin{macrocode}
 % \GPT@page: page number of pdf image or \@empty otherwise.
 \let\GPT@page\@empty
 % \GPT@print: file name for alternate image or \@empty otherwise.
@@ -707,8 +783,12 @@
     option `viewport' instead%
   }%
 }
+%    \end{macrocode}
+% \begin{oldcomments}
 % Here we have to trust that package graphicx is not
 % loaded after applying the fix "\AtBeginDocument".
+% \end{oldcomments}
+%    \begin{macrocode}
 \def\GPT@fix{%
   \begingroup\expandafter\expandafter\expandafter\endgroup
   \expandafter\ifx\csname define@key\endcsname\relax
@@ -729,12 +809,12 @@
 \AtBeginDocument{\GPT@fix}
 %</package,package003>
 %    \end{macrocode}
-%    \begin{macrocode}
-%<*package,package003>
+% \begin{oldcomments}
 % mechanism for re-use of objects also
 % allows us to get the size by deriving it from the initial storage;
 % this works for all graphics types.
-%</package,package003>
+% \end{oldcomments}
+%    \begin{macrocode}
 %<package003>\newcount\Gread@gobject
 %<*package,package003>
 \def\GPT@ReusedName#1{%
@@ -765,6 +845,8 @@
     \expandafter\expandafter\expandafter\@firstoftwo\expandafter\@gobbletwo
   \fi
 %</package,package003>
+%    \end{macrocode}
+%    \begin{macrocode}
 %<*package003>
   \@ifundefined{#1 image\GPT@page}{%
     \ifnum\driver@release>4
@@ -854,16 +936,9 @@
        \else
          \the\Gread@gobject
        \fi
-       , \the\wd\@tempboxa\space x \the\ht\@tempboxa
-       >%
-     }%
-  }{%
-    \def\Gin@llx{0}\let\Gin@lly\Gin@llx
-    \Gin@defaultbp\Gin@urx{\csname#1 width\GPT@page\endcsname}%
-    \Gin@defaultbp\Gin@ury{\csname#1 height\GPT@page\endcsname}%
-  }%
-}
 %</package003>
+%    \end{macrocode}
+%    \begin{macrocode}
 %<*package>
   % Ensure the default cropbox for \GPT@pagebox
   \ifx\GPT@pagebox\empty
@@ -937,16 +1012,26 @@
        \else
           , print=\GPT@print, id=\GPT@PrintObj
        \fi
+%</package>
+%<*package,package003>
        , \the\wd\@tempboxa\space x \the\ht\@tempboxa
        >%
      }%
   }{%
     \def\Gin@llx{0}\let\Gin@lly\Gin@llx
+%</package,package003>
+%<*package003>
+    \Gin@defaultbp\Gin@urx{\csname#1 width\GPT@page\endcsname}%
+    \Gin@defaultbp\Gin@ury{\csname#1 height\GPT@page\endcsname}%
+%</package003>
+%<*package>
     \Gin@defaultbp\Gin@urx{\csname#1 width\GPT@page\GPT@pagebox\endcsname}%
     \Gin@defaultbp\Gin@ury{\csname#1 height\GPT@page\GPT@pagebox\endcsname}%
+%</package>
+%<*package,package003>
   }%
 }
-%</package>
+%</package,package003>
 %    \end{macrocode}
 %    \begin{macrocode}
 %<*package,package003>
@@ -970,18 +1055,22 @@
         % for pdfTeX
         \Gin@clipfalse
       }{}%
+      \ifGin@clip
 %</package,package003>
 %<*package003>
-      \ifGin@clip
         \ifnum\driver@release<6
           \GPT@warn{No clipping support in pdfTeX < 0.14}%
         \else
+%</package003>
+%<*package,package003>
           \if!\Gin@vllx\Gin@vlly\Gin@vurx\Gin@vury!%
           \else
             \let\GPT@clipend\GPT@DoClipEnd
             \setbox\@tempboxa\hbox\bgroup
           \fi
-        \fi
+%</package,package003>
+%<package003>        \fi
+%<*package,package003>
       \fi
       \ifGPT@viewport
         \ifdim\Gin@vlly\p@=\z@
@@ -993,7 +1082,10 @@
           \hskip-\Gin@vllx bp\relax
         \fi
       \fi
-      \csname#1 image\GPT@page
+%</package,package003>
+%<package003>\csname#1 image\GPT@page
+%<package>\csname#1 image\GPT@page\GPT@pagebox
+%<*package,package003>
         \ifx\GPT@print\@empty\else!\fi
       \endcsname
       \ifGPT@viewport
@@ -1006,42 +1098,8 @@
     }%
   }%
 }
-%</package003>
-%<*package>
-      \ifGin@clip
-        \if!\Gin@vllx\Gin@vlly\Gin@vurx\Gin@vury!%
-        \else
-          \let\GPT@clipend\GPT@DoClipEnd
-          \setbox\@tempboxa\hbox\bgroup
-        \fi
-      \fi
-      \ifGPT@viewport
-        \ifdim\Gin@vlly\p@=\z@
-        \else
-          \lower\Gin@vlly bp\hbox\bgroup
-        \fi
-        \ifdim\Gin@vllx\p@=\z@
-        \else
-          \hskip-\Gin@vllx bp\relax
-        \fi
-      \fi
-      \csname#1 image\GPT@page\GPT@pagebox
-        \ifx\GPT@print\@empty\else!\fi
-      \endcsname
-      \ifGPT@viewport
-        \ifdim\Gin@vlly\p@=\z@
-        \else
-          \egroup
-        \fi
-        \GPT@clipend
-      \fi
-    }%
-  }%
-}
-%</package>
 %    \end{macrocode}
 %    \begin{macrocode}
-%<*package,package003>
 \newif\ifGPT@viewport
 \GPT@viewporttrue
 \let\GPT@clipend\relax
@@ -1067,7 +1125,8 @@
   \Gread@pdftex{#1}%
   \GPT@IsBitmapfalse
 }
-
+%    \end{macrocode}
+%    \begin{macrocode}
 \edef\Gread@MBox{/MediaBox}
 \def\Gread@pdf#1{%
   \begingroup
@@ -1124,10 +1183,8 @@
       \noexpand\noexpand\noexpand\@empty#1\relax
   }%
 }
-%</package,package003>
 %    \end{macrocode}
 %    \begin{macrocode}
-%<*package,package003>
 \def\Ginclude@mps#1{%
   \def\@tempa{!}%
   \ifx\Gin@scaley\@tempa
@@ -1209,9 +1266,12 @@
     }%
   }
 \fi
-
+%    \end{macrocode}
+% \begin{oldcomments}
 % v0.02e: restrict the rules to just the types that pdftex can currently
 % deal with.
+% \end{oldcomments}
+%    \begin{macrocode}
 \ifnum\driver@release>3
   \ifnum\driver@release>5
     \def\Gin@extensions{.png,.pdf,.jpg,.mps,.tif}
@@ -1232,9 +1292,8 @@
 \let\Gread@pdf\Gread@pdftex
 \let\Gread@png\Gread@pdfbitmap
 \let\Gread@jpg\Gread@pdfbitmap
-
-% v0.02e: restrict the rules to just the types that pdftex can currently
-% deal with.
+%    \end{macrocode}
+%    \begin{macrocode}
 \def\Gin@extensions{.png,.pdf,.jpg,.mps}
 \@namedef{Gin@rule@.jpg}#1{{jpg}{.jpg}{#1}}
 %</package>
@@ -1242,14 +1301,15 @@
 \@namedef{Gin@rule@.png}#1{{png}{.png}{#1}}
 \@namedef{Gin@rule@.mps}#1{{mps}{.mps}{#1}}
 \@namedef{Gin@rule@.pdf}#1{{pdf}{.pdf}{#1}}
-
-
+%    \end{macrocode}
+% \begin{oldcomments}
 % Rotation
 % slightly hacky, but set width of box 0 to 0pt otherwise
 % the CTM gets restored in the wrong place.
-
 % Patrick Daly found an error here with doubled minus signs when \Grot@sin is
 % negative. Fixed.
+% \end{oldcomments}
+%    \begin{macrocode}
 \def\Grot@start{%
   \pdfliteral{ q
      \Grot@cos\space\Grot@sin\space\if-\Grot@sin\else-\Grot@sin\fi\space\Grot@cos\space
@@ -1257,20 +1317,24 @@
   }%
   \wd\z@\z@
 }
-
 \def\Grot@end{\pdfliteral{ Q}}
-
+%    \end{macrocode}
+% \begin{oldcomments}
 % Scaling is OK, as graphics package does it right here.
+% \end{oldcomments}
+%    \begin{macrocode}
 \def\Gscale@start{%
   \pdfliteral{ q
     \Gscale@x\space0 0 \Gscale@y\space 0 0 cm%
   }%
 }
-
 \let\Gscale@end\Grot@end
-
+%    \end{macrocode}
+% \begin{oldcomments}
 % undo the trig.sty `optimisation' so that these 0 1 and -1 values
 % get written out as digits, not unexpandable TeX primitives.
+% \end{oldcomments}
+%    \begin{macrocode}
 \AtBeginDocument{%
   \expandafter\def\csname sin(0)\endcsname{0}%
   \expandafter\def\csname cos(0)\endcsname{1}%
@@ -1283,8 +1347,12 @@
 }
 %</package,package003>
 %<*package>
+%    \end{macrocode}
+% \begin{oldcomments}
 % Patch \Gin@setfile to execute #3, if it contains
 % a command
+% \end{oldcomments}
+%    \begin{macrocode}
 \AtBeginDocument{%
   \let\GPT@orgGin@setfile\Gin@setfile
   \def\Gin@setfile#1#2#3{%
@@ -1298,7 +1366,11 @@
 }
 %</package>
 %<*package,package003>
+%    \end{macrocode}
+% \begin{oldcomments}
 % Are we running under PDFTeX?
+% \end{oldcomments}
+%    \begin{macrocode}
 \ifx\pdfpageheight\@undefined
   \PackageWarningNoLine{%
     \@ifundefined{@currname}{pdftex.def}{\@currname}%
@@ -1319,11 +1391,13 @@
   \fi
   \pdfoutput=1
 \fi
-
-
+%    \end{macrocode}
+% \begin{oldcomments}
 % v0.02e: Restore catcodes of context letters.
 % Not needed with current version of supp-pdf
 % but protects against older versions.
+% \end{oldcomments}
+%    \begin{macrocode}
 \AtBeginDocument{%
   \edef\@tempa{%
     \catcode`\noexpand\!\the\catcode`\!
@@ -1332,11 +1406,14 @@
   \InputIfFileExists{supp-pdf}{}{}%
   \@tempa
 }
-
+%    \end{macrocode}
+% \begin{oldcomments}
 % these seem to upset pdftex. ignore them. SPQR 1999/08/02
 % allow for plain graphics, not graphicx.
 % pdftex.def is loaded before the definition in graphicx,
 % so do all the stuff \AtBeginDocument:
+% \end{oldcomments}
+%    \begin{macrocode}
 \AtBeginDocument{%
   \@ifundefined{define@key}{}{%
     \define@key{Gin}{natwidth}{}%
