@@ -1,0 +1,103 @@
+%\NeedsTeXFormat{LaTeX2e}
+%\ProvidesFile{pdftex.ins}
+%      [2003/07/14 v1.00 Installation script for pdftex.def (MS/HO)]
+%% 
+%% Copyright 2003 by Martin Schr"oder and Heiko Oberdiek.  All rights reserved.
+%% 
+%% This program may be redistributed and/or modified under the terms
+%% of the LaTeX Project Public License, either version 1.2 of this
+%% license, or (at your option) any later version.
+%% The latest version of this license is in
+%%   CTAN:macros/latex/base/lppl.txt.
+%% 
+%% $Id: pdftex.ins,v 1.1 2003/07/14 17:07:44 oneiros Exp $
+%%
+%% --------------- start of docstrip commands ------------------ 
+\input docstrip.tex
+{\ifx\endbatchfile\undefined
+\Msg{**********************************************}
+\Msg{*}
+\Msg{* This installation requires docstrip}
+\Msg{* version 2.4d or later.}
+\Msg{*}
+\Msg{* An older version of docstrip has been input}
+\Msg{*}
+\Msg{**********************************************}
+\errhelp{Move or rename old docstrip.tex.}
+\errmessage{Old docstrip in input path}
+\batchmode
+\csname @@end\endcsname
+\fi}
+
+\Msg{***********************************************************}
+\Msg{*}
+\Msg{* The pdftex distribution contains these files:}
+\Msg{*}
+\Msg{* \space\space pdftex.dtx}
+\Msg{* \space\space pdftex.ins}
+\Msg{*}
+\Msg{* If you receive only some of these files from someone, complain!}
+\Msg{*}
+\Msg{***********************************************************}
+
+\preamble
+
+Copyright (C) 2000-2003 David Carlisle, Sebastian Rahtz, Hans Hagen,
+Heiko Oberdiek and Martin Schröder
+
+This file is part of the pdftex package
+---------------------------------------
+
+This program may be redistributed and/or modified under the terms
+of the LaTeX Project Public License, either version 1.2 of this
+license, or (at your option) any later version.
+The latest version of this license is in
+   CTAN:macros/latex/base/lppl.txt.
+
+The pdftex package contains these files:
+  pdftex.dtx
+  pdftex.ins
+
+The current maintainers can be reached at pdftex-latex@pdftex.org
+
+The home page of this project is at http://pdftex-def.berlios.de
+Please report bugs etc. there
+
+\endpreamble
+\declarepreamble\driverpreamble
+
+Copyright (C) 2003 Heiko Oberdiek and Martin Schröder
+
+This file is part of the pdftex package
+-----------------------------------------
+
+To produce the documentation in the way you like you are allowed
+to change this driver file.
+
+\endpreamble
+
+\keepsilent
+\askforoverwritefalse
+\generate{\file{pdftex.def}{\from{pdftex.dtx}{package}}
+          \file{pdftex003.def}{\from{pdftex.dtx}{package003}}
+          \usepreamble\driverpreamble
+          \file{pdftex.drv}{\from{pdftex.dtx}{driver}}
+         }
+
+\Msg{***********************************************************}
+\Msg{*}
+\Msg{* To finish the installation you have to move the following}
+\Msg{* style files into a directory searched by TeX:}
+\Msg{*}
+\Msg{* \space\space pdftex.def}
+\Msg{* \space\space pdftex003.def}
+\Msg{*}
+\Msg{* To produce the documentation run the file pdftex.drv}
+\Msg{* through LaTeX.}
+\Msg{*}
+\Msg{* Happy TeXing}
+\Msg{***********************************************************}
+\endbatchfile
+%% 
+%% End of file `pdftex.ins'.
+%% vim:syntax=tex:tw=70:ts=2
