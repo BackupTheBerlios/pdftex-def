@@ -1,4 +1,4 @@
-\ProvidesFile{pdftex.def}[2002/06/18 v0.03j graphics/color for pdftex]
+\ProvidesFile{pdftex.def}[2002/06/19 v0.03k graphics/color for pdftex]
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 %%
 %% LaTeX Colour and Graphics support for PDFTeX
@@ -67,6 +67,8 @@
 % 2002/06/18 v0.03j
 %  * Contribution by P\'etiard Fran\c{c}ois <petiard@math.univ-fcomte.fr>:
 %    Improvement of \Ginclude@mps (support of viewport and clip).
+% 2002/06/19 v0.03k
+%  * Correction by P\'etiard Fran\c{c}ois for \GPT@DoEndClip.
 %
 % prefix of internal commands for this file `pdftex.def':
 %   \GPT@ (Graphics bundle PdfTex driver)
@@ -535,10 +537,12 @@
   % \Gin@urx and \Gin@ury already contain the correct values,
   % so both cases viewport and trim can be handled together:
   \dimen@\Gin@urx\p@
-  \advance\dimen@ -\Gin@vllx\p@
+  % v0.03k \Gin@vllx replaced by \Gin@llx
+  \advance\dimen@ -\Gin@llx\p@
   \wd\@tempboxa\strip@pt\dimen@ bp\relax
   \dimen@\Gin@ury\p@
-  \advance\dimen@ -\Gin@vlly\p@
+  % v0.03k \Gin@vlly replaced by \Gin@lly
+  \advance\dimen@ -\Gin@lly\p@
   \ht\@tempboxa\strip@pt\dimen@ bp\relax
   \pdfxform\@tempboxa
   \pdfrefxform\pdflastxform
