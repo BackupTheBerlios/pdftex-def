@@ -28,9 +28,11 @@
         % 5 ==> r >= b >= g
         { 1 exch sub mul 1 index add }
 
-        % Corrected gs implementation:
-        % 6 ==> same as case 0 (roundoff anomally)
-        { pop pop 0 1 index add exch }
+        % Bug fix:
+        % 6 ==> same as case 0 (h == 1 or roundoff anomally)
+        % h has to be set to zero, thus the calculation of
+        % case 0 can be simplified
+        { pop pop dup }
       }
     1 index 6 mul cvi              % (int)(6 * h)
     get exec
