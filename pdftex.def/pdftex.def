@@ -28,7 +28,7 @@
 %%
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 %
-% $Id: pdftex.def,v 1.16 2003/06/20 11:49:16 oberdiek Exp $
+% $Id: pdftex.def,v 1.17 2003/06/21 15:06:38 oberdiek Exp $
 %
 % History
 % 2003/06/20 v0.10a
@@ -163,11 +163,13 @@
   \def#3{#1}%
   \dimen@#1\p@
   \ifdim\dimen@<\z@
-    \PackageError{color}{Argument `#1' too small, not in range [0,#2]}\@ehd
+    \PackageError{color}{Argument `#1' too small, %
+                         not in range [0,\number#2]}\@ehd
     \def#3{0}%
   \fi
   \ifdim\dimen@>#2\p@
-    \PackageError{color}{Argument `#1' too large, not in range [0,#2]}\@ehd
+    \PackageError{color}{Argument `#1' too large, %
+                         not in range [0,\number#2]}\@ehd
     \def#3{#2}%
   \fi
 }
@@ -264,16 +266,21 @@
 %   http://homepages.borland.com/efg2lab/Graphics/Colors/HSV.htm
 %
 \def\color@hsb#1#2{\c@lor@@hsb#2\@@#1\z@}
-\def\color@HSB#1#2{\c@lor@@hsb#2\@@#1\p@}
+\def\color@Hsb#1#2{\c@lor@@hsb#2\@@#1\@ne}
+\def\color@HSB#1#2{\c@lor@@hsb#2\@@#1\tw@}
 \def\c@lor@@hsb#1,#2,#3\@@#4#5{%
   \ifcase#5%
-    \GPT@arg@test{#1}{1}\@tempa
-    \GPT@arg@test{#2}{1}\@tempb
-    \GPT@arg@test{#3}{1}\@tempc
+    \GPT@arg@test{#1}\@ne\@tempa
+    \GPT@arg@test{#2}\@ne\@tempb
+    \GPT@arg@test{#3}\@ne\@tempc
+  \or
+    \GPT@arg@test{#1}{360}\@tempa
+    \GPT@arg@test{#2}\@ne\@tempb
+    \GPT@arg@test{#3}\@ne\@tempc
   \else
     \GPT@arg@test{#1}{360}\@tempa
-    \GPT@arg@test{#2}{255}\@tempb
-    \GPT@arg@test{#3}{255}\@tempc
+    \GPT@arg@test{#2}\@cclv\@tempb
+    \GPT@arg@test{#3}\@cclv\@tempc
   \fi
   \begingroup
     \dimendef\H=1 % "hue" * 6
@@ -287,10 +294,12 @@
     \s=\@tempb\p@
     \b=\@tempc\p@
     \ifcase#5%
+    \or
+      \divide\H 360 %
     \else
       \divide\H 360 %
-      \divide\s 255 %
-      \divide\b 255 %
+      \divide\s\@cclv
+      \divide\b\@cclv
     \fi
     \H=6\H
     \edef\x{\expandafter\GPT@floor\the\H}%
