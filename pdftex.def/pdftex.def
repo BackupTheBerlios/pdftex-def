@@ -1,4 +1,4 @@
-\ProvidesFile{pdftex.def}[2001/05/25 v0.03g graphics/color for pdftex]
+\ProvidesFile{pdftex.def}[2001/09/01 v0.03h graphics/color for pdftex]
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 %%
 %% LaTeX Colour and Graphics support for PDFTeX
@@ -58,6 +58,9 @@
 % 2001/05/25 v0.03g
 %  * \pdfpagewidth and \pdfpageheight are not set to zero,
 %    if \paperwidth and \paperheight are not set (HO).
+% 2001/09/01 v0.03h
+%  * Compatibilty for miniltx.tex, problems fixed:
+%    \@ifpackageloaded, \PackageWarning, \PackageWarningNoLine.
 %
 % prefix of internal commands for this file `pdftex.def':
 %   \GPT@ (Graphics bundle PdfTex driver)
@@ -88,7 +91,31 @@
   \fi
 \fi
 
-\def\GPT@warn{\PackageWarning{pdftex.def}}
+% miniltx.tex does not define \PackageWarning
+% or \PackageWarningNoLine.
+\@ifundefined{PackageWarning}{%
+  \def\PackageWarning#1#2{%
+    \begingroup
+      \newlinechar=10 %
+      \def\MessageBreak{%
+        ^^J(#1)\@spaces\@spaces\@spaces\@spaces
+      }%
+      \immediate\write16{^^JPackage #1 Warning: #2\on@line.^^J}%
+    \endgroup
+  }%
+}{}
+\@ifundefined{PackageWarningNoLine}{%
+  \def\PackageWarningNoLine#1#2{%
+    \PackageWarning{#1}{#2\@gobble}%
+  }%
+}{}
+\@ifundefined{on@line}{%
+  \def\on@line{ on input line \the\inputlineno}%
+}{}
+\@ifundefined{@spaces}{%
+  \def\@spaces{\space\space\space\space}%
+}{}
+\def\GPT@warn{\PackageWarning{pdftex.def}}%
 \ifx\Gin@log\@undefined
   \def\Gin@log{\message}
 \fi
@@ -284,8 +311,10 @@
     option `viewport' instead%
   }%
 }
-\AtBeginDocument{%
-  \@ifpackageloaded{graphicx}{%
+\def\GPT@fix{%
+  \begingroup\expandafter\expandafter\expandafter\endgroup
+  \expandafter\ifx\csname define@key\endcsname\relax
+  \else
     \def\KV@Gin@bb{%
       \GPT@warn{%
         Option `bb' does not make sense,\MessageBreak
@@ -297,8 +326,9 @@
     \define@key{Gin}{bblly}{\GPT@disable{bblly}}%
     \define@key{Gin}{bburx}{\GPT@disable{bburx}}%
     \define@key{Gin}{bbury}{\GPT@disable{bbury}}%
-  }{}%
+  \fi
 }
+\AtBeginDocument{\GPT@fix}
 
 %
 % mechanism for re-use of objects also
