@@ -2,7 +2,7 @@
 %<package>\ProvidesFile{pdftex.def}
 %<package>         [2004/09/07 v0.10a-BETA graphics/color for pdftex]
 %<package003>\ProvidesFile{pdftex003.def}
-%<package003>         [2002/06/19 v0.03k graphics/color for pdftex]
+%<package003>         [2005/06/15 v0.03l graphics/color for pdftex]
 %
 %<*driver>
 \ProvidesFile{pdftex.drv}
@@ -55,9 +55,9 @@
 % \fi
 %
 % \CheckSum{1838}
-%% \RCS$Id: pdftex.dtx,v 1.5 2004/09/07 13:38:53 oneiros Exp $
-% \RCS$Revision: 1.5 $
-% \RCS$Date: 2004/09/07 13:38:53 $
+%% \RCS$Id: pdftex.dtx,v 1.6 2005/06/15 13:08:09 oberdiek Exp $
+% \RCS$Revision: 1.6 $
+% \RCS$Date: 2005/06/15 13:08:09 $
 %
 %% \CharacterTable
 %% {Upper-case    \A\B\C\D\E\F\G\H\I\J\K\L\M\N\O\P\Q\R\S\T\U\V\W\X\Y\Z
@@ -665,7 +665,7 @@
     \@ldc@l@r
   }%
   \let\@lduseb@x\usebox
-  \def\usebox#1{\@lduseb@x{#1}\set@color}%
+  \def\usebox#1{\@lduseb@x{#1}\reset@color}%
 }
 %    \end{macrocode}
 % \begin{oldcomments}
@@ -1453,6 +1453,8 @@
 %    used for new options to get more independence of package
 %    loading order (HO).
 %  * Added support for color models "hsb" and "HSB" (HO).
+% 2005/06/15 v0.03l
+%  * \usebox patch fixed (\aftergroup part removed).
 % 2002/06/19 v0.03k
 %  * Correction by P\'etiard Fran\c{c}ois for \GPT@DoEndClip.
 % 2002/06/18 v0.03j

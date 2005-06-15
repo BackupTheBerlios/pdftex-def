@@ -1,0 +1,22 @@
+% example of Hans-Christoph Wirth, posted in de.comp.text.tex,
+% Message-ID: <slrndau33t.l2t.hcw@helvetika.informatik.uni-wuerzburg.de>
+%
+\documentclass{article}
+\usepackage{graphicx}
+\begin{document}
+
+% \makeatletter
+% \let\set@color=\relax
+% \makeatother
+
+\newbox\foobox
+\setbox\foobox=\hbox{Zeile 2}
+
+\halign{#\cr
+  Zeile 1\cr
+  \usebox{\foobox}\cr
+  \noalign{\hrule}
+  Zeile 3\cr
+}
+
+\end{document}

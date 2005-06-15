@@ -1,107 +1,51 @@
-\ProvidesFile{pdftex.def}[2003/06/20 v0.10a-BETA graphics/color for pdftex]
-%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 %%
-%% LaTeX Colour and Graphics support for PDFTeX
+%% This is file `pdftex.def',
+%% generated with the docstrip utility.
 %%
-%% Copyright 2000-2003 David Carlisle, Sebastian Rahtz, Hans Hagen,
-%% Heiko Oberdiek and Martin Schröder
+%% The original source files were:
 %%
+%% pdftex.dtx  (with options: `package')
+%% 
+%% Copyright (C) 2000-2003 David Carlisle, Sebastian Rahtz, Hans Hagen,
+%% Heiko Oberdiek and Martin Schr^^f6der
+%% 
+%% This file is part of the pdftex package
+%% ---------------------------------------
+%% 
+%% This program may be redistributed and/or modified under the terms
+%% of the LaTeX Project Public License, either version 1.2 of this
+%% license, or (at your option) any later version.
+%% The latest version of this license is in
+%%    CTAN:macros/latex/base/lppl.txt.
+%% 
+%% The pdftex package contains these files:
+%%   pdftex.dtx
+%%   pdftex.ins
+%% 
 %% The current maintainers can be reached at pdftex-latex@pdftex.org
-%%
+%% 
 %% The home page of this project is at http://pdftex-def.berlios.de
 %% Please report bugs etc. there
+%% 
+\ProvidesFile{pdftex.def}
+         [2004/09/07 v0.10a-BETA graphics/color for pdftex]
+%% \RCS$Id: pdftex.def,v 1.18 2005/06/15 13:08:09 oberdiek Exp $
+%% \CharacterTable
+%% {Upper-case    \A\B\C\D\E\F\G\H\I\J\K\L\M\N\O\P\Q\R\S\T\U\V\W\X\Y\Z
+%%  Lower-case    \a\b\c\d\e\f\g\h\i\j\k\l\m\n\o\p\q\r\s\t\u\v\w\x\y\z
+%%  Digits        \0\1\2\3\4\5\6\7\8\9
+%%  Exclamation   \!     Double quote  \"     Hash (number) \#
+%%  Dollar        \$     Percent       \%     Ampersand     \&
+%%  Acute accent  \'     Left paren    \(     Right paren   \)
+%%  Asterisk      \*     Plus          \+     Comma         \,
+%%  Minus         \-     Point         \.     Solidus       \/
+%%  Colon         \:     Semicolon     \;     Less than     \<
+%%  Equals        \=     Greater than  \>     Question mark \?
+%%  Commercial at \@     Left bracket  \[     Backslash     \\
+%%  Right bracket \]     Circumflex    \^     Underscore    \_
+%%  Grave accent  \`     Left brace    \{     Vertical bar  \|
+%%  Right brace   \}     Tilde         \~}
 %%
-%% This file may be distributed and/or modified under the
-%% conditions of the LaTeX Project Public License, either version 1.2
-%% of this license or (at your option) any later version.
-%% The latest version of this license is in
-%%    http://www.latex-project.org/lppl.txt
-%% and version 1.2 or later is part of all distributions of LaTeX
-%% version 1999/12/01 or later.
-%%
-%% This program consists of the files pdftex.def and pdftex003.def
-%%
-%% It may be used by specifying the pdftex option to any of the
-%% supported packages, for example:
-%%
-%% \usepackage[pdftex]{graphicx}
-%%
-%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
-%
-% $Id: pdftex.def,v 1.17 2003/06/21 15:06:38 oberdiek Exp $
-%
-% History
-% 2003/06/20 v0.10a
-%  * Added option 'attr' (MS).
-%  * Added option 'pagebox' (MS).
-%  * Allow \write18 (MS).
-%  * Remove support for tif images as per pdftex 1.01a (MS).
-%  * Moved code for older versions to pdftex03.def
-%  * Fix for bug #516: definitions of keyval's \define@key
-%    used for new options to get more independence of package
-%    loading order (HO).
-%  * Added support for color models "hsb" and "HSB" (HO).
-% 2002/06/19 v0.03k
-%  * Correction by P\'etiard Fran\c{c}ois for \GPT@DoEndClip.
-% 2002/06/18 v0.03j
-%  * Contribution by P\'etiard Fran\c{c}ois <petiard@math.univ-fcomte.fr>:
-%    Improvement of \Ginclude@mps (support of viewport and clip).
-% 2001/11/29 v0.03i
-%  * Problem with \if@inlabel (plain format) fixed.
-% 2001/09/01 v0.03h
-%  * Compatibilty for miniltx.tex, problems fixed:
-%    \@ifpackageloaded, \PackageWarning, \PackageWarningNoLine,
-%    \@currname.
-% 2001/05/25 v0.03g
-%  * \pdfpagewidth and \pdfpageheight are not set to zero,
-%    if \paperwidth and \paperheight are not set (HO).
-% 2000/11/10 v0.03f
-%  * Bug, that produces an error message, if package `graphics'
-%    is used (introduced in 0.03d), fixed: If \Gin@vllx is not
-%    defined (graphics), then clipping and the moves of options
-%    viewport/trim are silently disabled (HO).
-% 2000/09/14 v0.03e
-%  * Options `bbllx', `bblly', `bburx', `bbury' disabled,
-%    option `bb' redirected with a warning to `viewport' (HO).
-% 2000/09/14 v0.03d
-%  * Fixes for `viewport' and `trim' (HO).
-%  * Clip support added for viewport and trim (HO).
-% 2000/09/04 v0.03c
-%  * Redefinition of `natwidth' and `natheight' \AtBeginDocument (HO).
-% 2000/08/31 v0.03b:
-%  * support for alternate print images: option `print' added (HO).
-%    * This feature is not supported by Ghostscript, xpdf, or AR3.
-%    * The images should have the same dimensions/resolution.
-%  * Two experimental options added (HO):
-%    * `quiet': log messages are suppressed.
-%    * `resolution': sets \pdfimageresolution.
-%    Because these options are not supported by graphicx,
-%    they have to be set after \usepackage{graphicx}, eg.
-%      \setkeys{Gin}{quiet,resolution=300}
-%    Option `quiet' (for pdftex) can be make known to graphic{s,x}
-%    with this line in graphics.cfg:
-%      \DeclareOption{quiet}{\let\Gin@log\@gobble}
-%    Caution: both options are experimental and can be
-%    change in next versions!
-%  * \pdfpage{width,height} are only set, if \paperwidth
-%    is defined (HO).
-% 2000/06/16 v0.03a:
-%  * Added Heiko to author list (DPC).
-% 2000/05/31 v0.02v:
-%  * Option `page' is defined at begin document,
-%    if package `keyval' is loaded after `pdftex.def'.
-% 2000/05/12 v0.02u:
-%  * support for multipage pdf files, option `page' added (HO).
-% 2000/05/02 v0.02t:
-%  * \pagecolor supported (HO).
-% 2000/04/20 v0.02s:
-%  * gray color model directly supported (HO).
-% ...
-%
-% prefix of internal commands for this file `pdftex.def':
-%   \GPT@ (Graphics bundle PdfTex driver)
-
-% load the old version of pdftex.def for older versions of pdftex.
 \let\GPT@next\relax
 \def\GPT@olddriver{\input{pdftex003.def}\endinput}%
 \ifx\pdftexversion\@undefined
@@ -112,9 +56,6 @@
   \fi
 \fi
 \GPT@next
-
-% miniltx.tex does not define \PackageWarning
-% or \PackageWarningNoLine.
 \@ifundefined{PackageWarning}{%
   \def\PackageWarning#1#2{%
     \begingroup
@@ -141,16 +82,6 @@
 \ifx\Gin@log\@undefined
   \def\Gin@log{\message}
 \fi
-
-% Colour Support. The following models may be used.
-%   * cmyk   supported directly.
-%   * rgb    supported directly.
-%   * RGB    converted to rgb by this file.
-%   * hsb    converted to rgb by this file.
-%   * HSB    converted to rgb by this file.
-%   * gray   supported directly.
-%   * named  converted to cmyk by this file.
-%
 \def\c@lor@arg#1{%
   \dimen@#1\p@
   \ifdim\dimen@<\z@\dimen@\maxdimen\fi
@@ -158,7 +89,6 @@
     \PackageError{color}{Argument `#1' not in range [0,1]}\@ehd
   \fi
 }
-% \GPT@arg@test{<value>}{<upper range>}{<cmd for result>}
 \def\GPT@arg@test#1#2#3{%
   \def#3{#1}%
   \dimen@#1\p@
@@ -204,67 +134,6 @@
   \divide\dimen@\@cclv
   \edef#2{\strip@pt\dimen@}%
 }
-%
-% The "hsb" color model is not supported by PDF, so the values
-% are converted into "rgb" values:
-%
-%   Input: h (hue), s (saturation), b (brightness)
-%          (h, s, b) \in ([0,1], [0,1], [0,1])       % hsb model
-%          (H, S, B) \in ([0,360], [0,255], [0,255]) % HSB model
-%          (h, s, b) := (H/360, S/255, B/255)
-%   Output: r (red), g (green), b (blue)
-%
-%   M := (1 - s) * b;
-%   D := s * b;
-%   H := 6 * h;
-%   x := (int)floor(H);
-%   if (x >= 6) {
-%       x := 0;
-%       H := 0;
-%   }
-%   switch(x) {
-%     case 0:    /* r >= g >= b */
-%       r := b;
-%       b := M;
-%       g := M + D * H;
-%       break;
-%     case 1:    /* g >= r >= b */
-%       g := b;
-%       b := M;
-%       r := M + D * (2 - H);
-%       break;
-%     case 2:    /* g >= b >= r */
-%       g := b;
-%       r := M;
-%       b := M + D * (H - 2);
-%       break;
-%     case 3:    /* b >= g >= r */
-%       b := b;
-%       r := M;
-%       g := M + D * (4 - H);
-%       break;
-%     case 4:    /* b >= r >= g */
-%       b := b;
-%       g := M;
-%       r := M + D * (H - 4);
-%       break;
-%     case 5:    /* r >= b >= g */
-%       r := b;
-%       g := M;
-%       b := M + D * (6 - H);
-%       break;
-%   }
-%
-% References:
-% * "Color Gamut Transform Pairs" by Alvy Ray Smith
-%   http://alvyray.com/Papers/PapersCG.htm
-%   ftp://ftp.alvyray.com/Acrobat/Color78.pdf
-% * Ghostscript's gs_cspace.ps
-%   Caution: the implementation of case 6 is buggy currently (8.10).
-% * "efg's Color Reference Library -- Color Science / Color Theory"
-%   http://homepages.borland.com/efg2lab/Library/Color/Science.htm
-%   http://homepages.borland.com/efg2lab/Graphics/Colors/HSV.htm
-%
 \def\color@hsb#1#2{\c@lor@@hsb#2\@@#1\z@}
 \def\color@Hsb#1#2{\c@lor@@hsb#2\@@#1\@ne}
 \def\color@HSB#1#2{\c@lor@@hsb#2\@@#1\tw@}
@@ -321,13 +190,11 @@
     }%
   \x
 }
-
 \begingroup
   \def\x{\def\GPT@floor}
   \catcode`P=12 %
   \catcode`T=12 %
 \lowercase{\expandafter\endgroup\x#1.#2PT{#1}}%
-
 \begingroup\expandafter\expandafter\expandafter\endgroup
 \expandafter\ifx\csname dimexpr\endcsname\relax
   \def\GPT@hsb@calc{%
@@ -408,7 +275,6 @@
     \fi
   }%
 \fi
-
 \def\color@named#1#2{\c@lor@@named#2,,\@@#1}
 \def\c@lor@@named#1,#2,#3\@@#4{%
   \@ifundefined{col@#1}{%
@@ -417,7 +283,6 @@
     \edef#4{\csname col@#1\endcsname}%
   }%
 }
-
 \def\set@color{%
   \pdfliteral{\current@color}%
   \aftergroup\reset@color
@@ -427,8 +292,6 @@
   \expandafter\edef\csname col@#1\endcsname{#2}%
 }
 \def\current@color{0 g 0 G}
-
-% v0.02t: support for \pagecolor
 \def\set@page@color{%
   \global\let\current@page@color\current@color
   \@ifundefined{GPTorg@shipout}{%
@@ -465,10 +328,6 @@
     }%
   }{}%
 }
-
-% Need the `colorfix' modifications as no internal colour stack
-% is maintained
-%<*colorfix>
 \AtBeginDocument{%
   \let\@ldc@l@r\color
   \def\color{%
@@ -479,51 +338,18 @@
     \@ldc@l@r
   }%
   \let\@lduseb@x\usebox
-  \def\usebox#1{\@lduseb@x{#1}\set@color}%
+  \def\usebox#1{\@lduseb@x{#1}\reset@color}%
 }
-%</colorfix>
-
-%
-% Graphic inclusion. Currently supports .png, .jpg, .mps and .pdf inclusion;
-% .mps is MetaPost output.
-% .mps inclusion depends on loading a CONTEXT module by Hans Hagen;
-% .pdf also needs a Context module unless pdftex 0.12n or later.
-%
-% PNG bitmaps may be scaled/rotated as usual
-% by the graphics commands or keyword arguments.
-%
-% Note the magic in front of the file name after \pdfimage, to
-% prevent it fouling up with file names starting with "depth".
 \def\Gread@png#1{%
   \setbox\@tempboxa\hbox{\pdfimage\noexpand\noexpand\noexpand\@empty#1\relax}%
   \def\Gin@llx{0}\let\Gin@lly\Gin@llx
   \Gin@defaultbp\Gin@urx{\wd\@tempboxa}%
   \Gin@defaultbp\Gin@ury{\ht\@tempboxa}%
 }
-
-%
-% support for
-% * multipage pdf images
-% * alternate print image (bitmaps only)
-%   * printed image can be resused, but not the base image,
-%     because it's dictionary contains the additional key /Alternates.
-%   * not supported by Ghostscript or xpdf.
-% * option quiet
-% * option attr for additional entries in the dictionary of the
-%     generated Forms XObject
-% * option pagebox for specifying the <pdf box spec>
-%     Default is the cropbox to be compatible with old versions of pdfTeX.
-%
-% \GPT@page: page number of pdf image or \@empty otherwise.
 \let\GPT@page\@empty
-% \GPT@print: file name for alternate image or \@empty otherwise.
 \let\GPT@print\@empty
-% \GPT@attr: additional attributes.
 \let\GPT@attr\@empty
-% \GPT@pagebox: <pdf box spec>
 \let\GPT@pagebox\@empty
-%
-% Test for \define@key without defining it
 \begingroup\expandafter\expandafter\expandafter\endgroup
 \expandafter\ifx\csname define@key\endcsname\relax
   % package keyval is not loaded yet, thus its definitions
@@ -562,16 +388,12 @@
 \GPT@define@key{Gin}{pagebox}{%
   \def\GPT@pagebox{ #1}%
 }%
-
-% redefinitions of some graphicx options:
 \def\GPT@disable#1{%
   \GPT@warn{%
     Option `#1' is not supported, use\MessageBreak
     option `viewport' instead%
   }%
 }
-% Here we have to trust that package graphicx is not
-% loaded after applying the fix "\AtBeginDocument".
 \def\GPT@fix{%
   \begingroup\expandafter\expandafter\expandafter\endgroup
   \expandafter\ifx\csname define@key\endcsname\relax
@@ -590,12 +412,6 @@
   \fi
 }
 \AtBeginDocument{\GPT@fix}
-
-%
-% mechanism for re-use of objects also
-% allows us to get the size by deriving it from the initial storage;
-% this works for all graphics types.
-%
 \def\GPT@ReusedName#1{%
   \ifx\GPT@print\@empty
     #1%
@@ -725,11 +541,11 @@
         \Gin@clipfalse
       }{}%
       \ifGin@clip
-        \if!\Gin@vllx\Gin@vlly\Gin@vurx\Gin@vury!%
-        \else
-          \let\GPT@clipend\GPT@DoClipEnd
-          \setbox\@tempboxa\hbox\bgroup
-        \fi
+          \if!\Gin@vllx\Gin@vlly\Gin@vurx\Gin@vury!%
+          \else
+            \let\GPT@clipend\GPT@DoClipEnd
+            \setbox\@tempboxa\hbox\bgroup
+          \fi
       \fi
       \ifGPT@viewport
         \ifdim\Gin@vlly\p@=\z@
@@ -741,7 +557,7 @@
           \hskip-\Gin@vllx bp\relax
         \fi
       \fi
-      \csname#1 image\GPT@page\GPT@pagebox
+\csname#1 image\GPT@page\GPT@pagebox
         \ifx\GPT@print\@empty\else!\fi
       \endcsname
       \ifGPT@viewport
@@ -779,7 +595,6 @@
   \Gread@pdftex{#1}%
   \GPT@IsBitmapfalse
 }
-
 \edef\Gread@MBox{/MediaBox}
 \def\Gread@pdf#1{%
   \begingroup
@@ -799,7 +614,6 @@
       \Gread@true
       \let\@tempb\Gread@false
       \loop
-% v0.02e: use \. not \@tempa so the space is preserved before [
         \read\@inputcheck to\.%
         \ifeof\@inputcheck
           \Gread@false
@@ -830,13 +644,11 @@
 }
 \def\Ginclude@png#1{%
   \hbox{%
-% v0.02f add \@depth\z@ (from Sebastian)
     \pdfimage
       \@height\Gin@req@height \@width\Gin@req@width \@depth\z@
       \noexpand\noexpand\noexpand\@empty#1\relax
   }%
 }
-
 \def\Ginclude@mps#1{%
   \def\@tempa{!}%
   \ifx\Gin@scaley\@tempa
@@ -853,11 +665,11 @@
         \Gin@clipfalse
       }{}%
       \ifGin@clip
-        \if!\Gin@vllx\Gin@vlly\Gin@vurx\Gin@vury!%
-        \else
-          \let\GPT@clipend\GPT@DoClipEnd
-          \setbox\@tempboxa\hbox\bgroup
-        \fi
+          \if!\Gin@vllx\Gin@vlly\Gin@vurx\Gin@vury!%
+          \else
+            \let\GPT@clipend\GPT@DoClipEnd
+            \setbox\@tempboxa\hbox\bgroup
+          \fi
       \fi
       \ifGPT@viewport
         \ifdim\Gin@vlly\p@=\z@
@@ -887,22 +699,11 @@
 \let\Gread@pdf\Gread@pdftex
 \let\Gread@png\Gread@pdfbitmap
 \let\Gread@jpg\Gread@pdfbitmap
-
-% v0.02e: restrict the rules to just the types that pdftex can currently
-% deal with.
 \def\Gin@extensions{.png,.pdf,.jpg,.mps}
 \@namedef{Gin@rule@.jpg}#1{{jpg}{.jpg}{#1}}
 \@namedef{Gin@rule@.png}#1{{png}{.png}{#1}}
 \@namedef{Gin@rule@.mps}#1{{mps}{.mps}{#1}}
 \@namedef{Gin@rule@.pdf}#1{{pdf}{.pdf}{#1}}
-
-
-% Rotation
-% slightly hacky, but set width of box 0 to 0pt otherwise
-% the CTM gets restored in the wrong place.
-
-% Patrick Daly found an error here with doubled minus signs when \Grot@sin is
-% negative. Fixed.
 \def\Grot@start{%
   \pdfliteral{ q
      \Grot@cos\space\Grot@sin\space\if-\Grot@sin\else-\Grot@sin\fi\space\Grot@cos\space
@@ -910,20 +711,13 @@
   }%
   \wd\z@\z@
 }
-
 \def\Grot@end{\pdfliteral{ Q}}
-
-% Scaling is OK, as graphics package does it right here.
 \def\Gscale@start{%
   \pdfliteral{ q
     \Gscale@x\space0 0 \Gscale@y\space 0 0 cm%
   }%
 }
-
 \let\Gscale@end\Grot@end
-
-% undo the trig.sty `optimisation' so that these 0 1 and -1 values
-% get written out as digits, not unexpandable TeX primitives.
 \AtBeginDocument{%
   \expandafter\def\csname sin(0)\endcsname{0}%
   \expandafter\def\csname cos(0)\endcsname{1}%
@@ -934,9 +728,6 @@
   \expandafter\def\csname sin(180)\endcsname{0}%
   \expandafter\def\csname cos(180)\endcsname{-1}%
 }
-
-% Patch \Gin@setfile to execute #3, if it contains
-% a command
 \AtBeginDocument{%
   \let\GPT@orgGin@setfile\Gin@setfile
   \def\Gin@setfile#1#2#3{%
@@ -948,8 +739,6 @@
     \fi
   }%
 }
-
-% Are we running under PDFTeX?
 \ifx\pdfpageheight\@undefined
   \PackageWarningNoLine{%
     \@ifundefined{@currname}{pdftex.def}{\@currname}%
@@ -970,11 +759,6 @@
   \fi
   \pdfoutput=1
 \fi
-
-
-% v0.02e: Restore catcodes of context letters.
-% Not needed with current version of supp-pdf
-% but protects against older versions.
 \AtBeginDocument{%
   \edef\@tempa{%
     \catcode`\noexpand\!\the\catcode`\!
@@ -983,11 +767,6 @@
   \InputIfFileExists{supp-pdf}{}{}%
   \@tempa
 }
-
-% these seem to upset pdftex. ignore them. SPQR 1999/08/02
-% allow for plain graphics, not graphicx.
-% pdftex.def is loaded before the definition in graphicx,
-% so do all the stuff \AtBeginDocument:
 \AtBeginDocument{%
   \@ifundefined{define@key}{}{%
     \define@key{Gin}{natwidth}{}%
@@ -995,4 +774,5 @@
   }%
 }%
 \endinput
-% vim: syntax=tex:tw=75:ts=2
+%%
+%% End of file `pdftex.def'.
