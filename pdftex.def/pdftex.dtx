@@ -2,7 +2,7 @@
 %<package>\ProvidesFile{pdftex.def}
 %<package>         [2004/09/07 v0.10a-BETA graphics/color for pdftex]
 %<package003>\ProvidesFile{pdftex003.def}
-%<package003>         [2005/06/15 v0.03l graphics/color for pdftex]
+%<package003>         [2005/06/20 v0.03m graphics/color for pdftex]
 %
 %<*driver>
 \ProvidesFile{pdftex.drv}
@@ -55,9 +55,9 @@
 % \fi
 %
 % \CheckSum{1838}
-%% \RCS$Id: pdftex.dtx,v 1.6 2005/06/15 13:08:09 oberdiek Exp $
-% \RCS$Revision: 1.6 $
-% \RCS$Date: 2005/06/15 13:08:09 $
+%% \RCS$Id: pdftex.dtx,v 1.7 2005/06/20 15:34:22 oberdiek Exp $
+% \RCS$Revision: 1.7 $
+% \RCS$Date: 2005/06/20 15:34:22 $
 %
 %% \CharacterTable
 %% {Upper-case    \A\B\C\D\E\F\G\H\I\J\K\L\M\N\O\P\Q\R\S\T\U\V\W\X\Y\Z
@@ -269,7 +269,12 @@
         \ifnum\pdftexversion=14
           \def\driver@release{6}%
         \else
-          \def\driver@release{7}%
+          \ifnum\pdftexversion<110
+            \def\driver@release{7}%
+          \else
+            % .tif support was dropped in pdfTeX 1.10a
+            \def\driver@release{8}%
+          \fi
         \fi
       \fi
     \fi
@@ -1287,13 +1292,13 @@
 % \end{oldcomments}
 %    \begin{macrocode}
 \ifnum\driver@release>3
+  \def\Gin@extensions{.png,.pdf,.jpg,.mps}
+  \@namedef{Gin@rule@.jpg}#1{{jpg}{.jpg}{#1}}
   \ifnum\driver@release>5
-    \def\Gin@extensions{.png,.pdf,.jpg,.mps,.tif}
-    \@namedef{Gin@rule@.tif}#1{{tif}{.tif}{#1}}
-    \@namedef{Gin@rule@.jpg}#1{{jpg}{.jpg}{#1}}
-  \else
-    \def\Gin@extensions{.png,.pdf,.jpg,.mps}
-    \@namedef{Gin@rule@.jpg}#1{{jpg}{.jpg}{#1}}
+    \ifnum\driver@release<8
+      \def\Gin@extensions{.png,.pdf,.jpg,.mps,.tif}
+      \@namedef{Gin@rule@.tif}#1{{tif}{.tif}{#1}}
+    \fi
   \fi
 \else
   \def\Gin@extensions{.png,.pdf,.mps}
@@ -1453,6 +1458,8 @@
 %    used for new options to get more independence of package
 %    loading order (HO).
 %  * Added support for color models "hsb" and "HSB" (HO).
+% 2005/06/20 v0.03m
+%  * .tif support is removed for pdfTeX >= 1.10a
 % 2005/06/15 v0.03l
 %  * \usebox patch fixed (\aftergroup part removed).
 % 2002/06/19 v0.03k
